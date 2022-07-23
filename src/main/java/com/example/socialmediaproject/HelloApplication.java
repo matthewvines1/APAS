@@ -16,22 +16,43 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         //FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         //Scene scene = new Scene(fxmlLoader.load(), 960, 600);
-        stage.setTitle("Hello!");
+        stage.setTitle("APAS!");
 
         //Menu Bar
         MenuBar menuBar = new MenuBar();
         //File
         Menu menu1 = new Menu("File");
         Menu menuItem1_1 = new Menu("Import");
-        MenuItem menuItem1_1_1 = new MenuItem("Import vCard");
-        MenuItem menuItem1_1_2 = new MenuItem("Import CSV");
+        Menu menuItem1_1_1 = new Menu("External/Cloud");
+        MenuItem menuItem1_1_1_1 = new MenuItem("Contacts");
+        MenuItem menuItem1_1_1_2 = new MenuItem("Invoices");
+        MenuItem menuItem1_1_1_3 = new MenuItem("All Files");
+        menuItem1_1_1.getItems().addAll(menuItem1_1_1_1, menuItem1_1_1_2, menuItem1_1_1_3);
+        Menu menuItem1_1_2 = new Menu("Internal");
+        MenuItem menuItem1_1_2_1 = new MenuItem("Contacts vCard");
+        MenuItem menuItem1_1_2_2 = new MenuItem("Contacts CSV");
+        MenuItem menuItem1_1_2_3 = new MenuItem("Invoices CSV");
+        MenuItem menuItem1_1_2_4 = new MenuItem("All Files ZIP");
+        menuItem1_1_2.getItems().addAll(menuItem1_1_2_1, menuItem1_1_2_2, menuItem1_1_2_3, menuItem1_1_2_4);
         menuItem1_1.getItems().addAll(menuItem1_1_1, menuItem1_1_2);
-        MenuItem menuItem1_2 = new MenuItem("Placeholder 2");
+        Menu menuItem1_2 = new Menu("Export");
+        Menu menuItem1_2_1 = new Menu("External/Cloud");
+        MenuItem menuItem1_2_1_1 = new MenuItem("Contacts");
+        MenuItem menuItem1_2_1_2 = new MenuItem("Invoices");
+        MenuItem menuItem1_2_1_3 = new MenuItem("All Files");
+        menuItem1_2_1.getItems().addAll(menuItem1_2_1_1, menuItem1_2_1_2, menuItem1_2_1_3);
+        Menu menuItem1_2_2 = new Menu("Internal");
+        MenuItem menuItem1_2_2_1 = new MenuItem("Contacts vCard");
+        MenuItem menuItem1_2_2_2 = new MenuItem("Contacts CSV");
+        MenuItem menuItem1_2_2_3 = new MenuItem("Invoices CSV");
+        MenuItem menuItem1_2_2_4 = new MenuItem("All Files ZIP");
+        menuItem1_2_2.getItems().addAll(menuItem1_2_2_1, menuItem1_2_2_2, menuItem1_2_2_3, menuItem1_2_2_4);
+        menuItem1_2.getItems().addAll(menuItem1_2_1, menuItem1_2_2);
         MenuItem menuItem1_3 = new MenuItem("Placeholder 3");
         menu1.getItems().addAll(menuItem1_1, menuItem1_2, menuItem1_3);
         //Edit
         Menu menu2 = new Menu("Edit");
-        MenuItem menuItem2_1 = new MenuItem("Placeholder 1");
+        MenuItem menuItem2_1 = new MenuItem("Edit Contacts");
         MenuItem menuItem2_2 = new MenuItem("Placeholder 2");
         MenuItem menuItem2_3 = new MenuItem("Placeholder 3");
         menu2.getItems().addAll(menuItem2_1, menuItem2_2, menuItem2_3);
@@ -50,7 +71,7 @@ public class HelloApplication extends Application {
         menuBar.getMenus().addAll(menu1, menu2, menu3, menu4);
 
         VBox vBox = new VBox(menuBar);
-        Scene scene = new Scene(vBox, 960, 900);
+        Scene scene = new Scene(vBox, 900, 600);
         stage.setScene(scene);
         stage.show();
     }
