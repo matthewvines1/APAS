@@ -62,14 +62,6 @@ public class MenuModel {
 
     }
 
-    protected void undo (MainController mainController) {
-
-    }
-
-    protected void redo (MainController mainController) {
-
-    }
-
     protected void editContacts () {
 
     }
