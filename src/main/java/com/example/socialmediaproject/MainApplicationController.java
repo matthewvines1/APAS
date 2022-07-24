@@ -4,23 +4,37 @@ import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainApplication extends Application {
+public class MainApplicationController extends Application {
 
+    //State variables
     private final int STATE_COUNT = 20;
-    private int currentState = 0;
-    private ArrayList<MenuModel> stateList = new ArrayList<>();
-    private MenuModel menuModel = new MenuModel();
+    private int currentState;
+    private ArrayList<MainModel> stateList;
+    //Model variables
+    private MainModel mainModel;
+    //UI variables
+    private FXMLLoader fxmlLoader;
+    private Scene scene;
+    private Image logo;
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-menu-wrapper.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 960, 600);
+        //Initialize variables
+        currentState = 0;
+        stateList = new ArrayList<>();
+        mainModel = new MainModel();
+        logo = new Image(MainApplicationController.class.getResourceAsStream("logo.png"));
+        //Start UI
+        fxmlLoader = new FXMLLoader(MainApplicationController.class.getResource("main-menu-wrapper.fxml"));
+        scene = new Scene(fxmlLoader.load(), 960, 600);
         stage.setTitle("APAS");
+        stage.getIcons().add(logo);
         stage.setScene(scene);
         stage.show();
     }
@@ -31,79 +45,79 @@ public class MainApplication extends Application {
 
     @FXML
     protected void importContactsVCard() {
-        menuModel.importContactsVCard();
+        mainModel.importContactsVCard();
     }
 
     @FXML
     protected void importContactsCSV() {
-        menuModel.importContactsCSV();
+        mainModel.importContactsCSV();
     }
 
     @FXML
     protected void importInvoicesCSV() {
-        menuModel.importInvoicesCSV();
+        mainModel.importInvoicesCSV();
     }
 
     @FXML
     protected void importAllFilesZIP () {
-        menuModel.importAllFilesZIP();
+        mainModel.importAllFilesZIP();
     }
 
     @FXML
     protected void importContactsCloud () {
-        menuModel.importContactsCloud();
+        mainModel.importContactsCloud();
     }
 
     @FXML
     protected void importInvoicesCloud () {
-        menuModel.importInvoicesCloud();
+        mainModel.importInvoicesCloud();
     }
 
     @FXML
     protected void importAllFilesCloud () {
-        menuModel.importAllFilesCloud();
+        mainModel.importAllFilesCloud();
     }
 
     @FXML
     protected void exportContactsVCard() {
-        menuModel.exportContactsVCard();
+        mainModel.exportContactsVCard();
     }
 
     @FXML
     protected void exportContactsCSV() {
-        menuModel.exportContactsCSV();
+        mainModel.exportContactsCSV();
     }
 
     @FXML
     protected void exportInvoicesCSV() {
-        menuModel.exportInvoicesCSV();
+        mainModel.exportInvoicesCSV();
     }
 
     @FXML
     protected void exportAllFilesZIP () {
-        menuModel.exportAllFilesZIP();
+        mainModel.exportAllFilesZIP();
     }
 
     @FXML
     protected void exportContactsCloud () {
-        menuModel.exportContactsCloud();
+        mainModel.exportContactsCloud();
     }
 
     @FXML
     protected void exportInvoicesCloud () {
-        menuModel.exportInvoicesCloud();
+        mainModel.exportInvoicesCloud();
     }
 
     @FXML
     protected void exportAllFilesCloud () {
-        menuModel.exportAllFilesCloud();
+        mainModel.exportAllFilesCloud();
     }
 
     @FXML
     protected void undo () {
         if(currentState > 0) {
             currentState -= 1;
-            menuModel = stateList.get(currentState);
+            mainModel = stateList.get(currentState);
         }
     }
 
@@ -111,30 +125,30 @@ public class MainApplication extends Application {
     protected void redo () {
         if(currentState < STATE_COUNT) {
             currentState += 1;
-            menuModel = stateList.get(currentState);
+            mainModel = stateList.get(currentState);
         }
     }
 
     @FXML
     protected void editContacts () {
-        menuModel.editContacts();
+        mainModel.editContacts();
     }
 
     @FXML
     protected void about () {
-        menuModel.about();
+        mainModel.about();
     }
 
     @FXML
     protected void onExit() {
-        menuModel.exitProgram();
+        mainModel.exitProgram();
     }
 
     private void saveState() {
         while(stateList.size()-1 > currentState) {
             stateList.remove(stateList.size() - 1);
         }
-        stateList.add(menuModel);
+        stateList.add(mainModel);
         currentState += 1;
         while(stateList.size() > STATE_COUNT) {
             stateList.remove(0);

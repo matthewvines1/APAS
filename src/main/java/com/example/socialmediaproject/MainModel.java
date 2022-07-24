@@ -1,10 +1,8 @@
 package com.example.socialmediaproject;
 
-import java.util.ArrayList;
-
 import static javafx.application.Platform.exit;
 
-public class MenuModel {
+public class MainModel {
 
     protected void importContactsVCard() {
 
