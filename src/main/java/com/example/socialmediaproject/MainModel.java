@@ -4,6 +4,13 @@ import static javafx.application.Platform.exit;
 
 public class MainModel {
 
+    private ImportExportModel importExportModel;
+    private EditContactsModel editContactsModel;
+
+    public void MainModel() {
+        importExportModel = new ImportExportModel();
+        editContactsModel = new EditContactsModel();
+    }
     protected void importContactsVCard() {
 
     }

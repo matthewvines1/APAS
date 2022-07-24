@@ -3,14 +3,20 @@ package com.example.socialmediaproject;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
-public class MainApplicationController extends Application {
+public class MainApplicationController extends Application implements Initializable {
 
     //State variables
     private final int STATE_COUNT = 20;
@@ -19,6 +25,7 @@ public class MainApplicationController extends Application {
     //Model variables
     private MainModel mainModel;
     //UI variables
+    private Stage stage;
     private FXMLLoader fxmlLoader;
     private Scene scene;
     private Image logo;
@@ -29,6 +36,7 @@ public class MainApplicationController extends Application {
         currentState = 0;
         stateList = new ArrayList<>();
         mainModel = new MainModel();
+        this.stage = stage;
         logo = new Image(MainApplicationController.class.getResourceAsStream("logo.png"));
         //Start UI
         fxmlLoader = new FXMLLoader(MainApplicationController.class.getResource("main-menu-wrapper.fxml"));
@@ -44,8 +52,13 @@ public class MainApplicationController extends Application {
     }
 
     @FXML
-    protected void importContactsVCard() {
-        mainModel.importContactsVCard();
+    protected void importContactsVCard(javafx.event.ActionEvent event) throws IOException {
+        Parent loader = FXMLLoader.load(getClass().getResource("import-export-window.fxml"));
+        MenuBar menuBar = (MenuBar)stage.getScene().lookup("myMenuBar");
+        Scene newScene = new Scene(loader);
+        Stage newStage = (Stage) menuBar.getScene().getWindow();
+        newStage.setScene(newScene);
+        newStage.show();
     }
 
     @FXML
@@ -154,5 +167,10 @@ public class MainApplicationController extends Application {
             stateList.remove(0);
             currentState = STATE_COUNT;
         }
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
     }
 }
