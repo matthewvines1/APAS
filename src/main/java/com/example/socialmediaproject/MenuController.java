@@ -1,64 +1,39 @@
 package com.example.socialmediaproject;
 
-import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
-public class MainApplicationController extends Application implements Initializable {
+public class MenuController {
+
+    //Scene variables
+    private Stage stage;
+    private Scene scene;
+    private Parent root;
+    @FXML
+    MenuBar myMenuBar;
 
     //State variables
     private final int STATE_COUNT = 20;
     private int currentState;
     private ArrayList<MainModel> stateList;
-    //Model variables
     private MainModel mainModel;
-    //UI variables
-    private Stage stage;
-    private FXMLLoader fxmlLoader;
-    private Scene scene;
-    private Image logo;
-
-    @Override
-    public void start(Stage stage) throws IOException {
-        //Initialize variables
-        currentState = 0;
-        stateList = new ArrayList<>();
-        mainModel = new MainModel();
-        this.stage = stage;
-        logo = new Image(MainApplicationController.class.getResourceAsStream("logo.png"));
-        //Start UI
-        fxmlLoader = new FXMLLoader(MainApplicationController.class.getResource("main-menu-wrapper.fxml"));
-        scene = new Scene(fxmlLoader.load(), 960, 600);
-        stage.setTitle("APAS");
-        stage.getIcons().add(logo);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     @FXML
-    protected void importContactsVCard(javafx.event.ActionEvent event) throws IOException {
-        Parent loader = FXMLLoader.load(getClass().getResource("import-export-window.fxml"));
-        MenuBar menuBar = (MenuBar)stage.getScene().lookup("myMenuBar");
-        Scene newScene = new Scene(loader);
-        Stage newStage = (Stage) menuBar.getScene().getWindow();
-        newStage.setScene(newScene);
-        newStage.show();
+    public void importContactsVCard(ActionEvent event) throws IOException {
+        root = FXMLLoader.load(getClass().getResource("import-export-window.fxml"));
+        stage = (Stage)myMenuBar.getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
     @FXML
@@ -167,10 +142,5 @@ public class MainApplicationController extends Application implements Initializa
             stateList.remove(0);
             currentState = STATE_COUNT;
         }
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 }

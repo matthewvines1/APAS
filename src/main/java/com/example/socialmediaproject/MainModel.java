@@ -11,6 +11,14 @@ public class MainModel {
         importExportModel = new ImportExportModel();
         editContactsModel = new EditContactsModel();
     }
+
+    protected ImportExportModel getImportExportModel() {
+        return importExportModel;
+    }
+
+    protected EditContactsModel getEditContactsModel() {
+        return editContactsModel;
+    }
     protected void importContactsVCard() {
 
     }
