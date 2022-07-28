@@ -7,12 +7,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.Pane;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class MenuController {
+
+    private final String IMPORT_EXPORT_TITLE = "Import/Export";
 
     //Scene variables
     private Stage stage;
@@ -30,7 +33,11 @@ public class MenuController {
     @FXML
     public void importContactsVCard(ActionEvent event) throws IOException {
         root = FXMLLoader.load(getClass().getResource("import-export-window.fxml"));
-        contentArea.getChildren().add(root);
+        Stage popupStage = new Stage();
+        popupStage.setTitle(IMPORT_EXPORT_TITLE);
+        popupStage.getIcons().add(GlobalVariables.LOGO);
+        popupStage.setScene(new Scene(root, GlobalVariables.DEFAULT_POPUP_WIDTH, GlobalVariables.DEFAULT_POPUP_HEIGHT));
+        popupStage.show();
     }
 
     @FXML

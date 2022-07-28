@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public class Main extends Application {
 
+    private final String APPLICATION_NAME = "APAS";
+
     //UI variables
     Stage stage;
 
@@ -17,12 +19,11 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         //Initialize variables
         this.stage = stage;
-        Image logo = new Image(Main.class.getResourceAsStream("logo.png"));
         //Start UI
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main-menu-wrapper.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 960, 600);
-        stage.setTitle("APAS");
-        stage.getIcons().add(logo);
+        Scene scene = new Scene(fxmlLoader.load(), GlobalVariables.DEFAULT_WINDOW_WIDTH, GlobalVariables.DEFAULT_WINDOW_HEIGHT);
+        stage.setTitle(APPLICATION_NAME);
+        stage.getIcons().add(GlobalVariables.LOGO);
         stage.setScene(scene);
         stage.show();
     }
