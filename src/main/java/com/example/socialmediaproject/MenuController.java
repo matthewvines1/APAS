@@ -1,11 +1,15 @@
 package com.example.socialmediaproject;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -30,79 +34,127 @@ public class MenuController {
     private ArrayList<MainModel> stateList;
     private MainModel mainModel;
 
-    @FXML
-    public void importContactsVCard(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("import-export-window.fxml"));
+    private void putElementIntoTab
+
+    private void openInternalExternalPopup(int paneSelection1, int paneSelection2, int paneSelection3) {
+        try {
+            root = FXMLLoader.load(getClass().getResource("import-export-window.fxml"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Stage popupStage = new Stage();
         popupStage.setTitle(IMPORT_EXPORT_TITLE);
         popupStage.getIcons().add(GlobalVariables.LOGO);
-        popupStage.setScene(new Scene(root, GlobalVariables.DEFAULT_POPUP_WIDTH, GlobalVariables.DEFAULT_POPUP_HEIGHT));
+        Scene popupScene = new Scene(root, GlobalVariables.DEFAULT_POPUP_WIDTH, GlobalVariables.DEFAULT_POPUP_HEIGHT);
+        String tabPaneName1 = "#mainTabPane";
+        String tabPaneName2 = "";
+        String tabPaneName3 = "";
+        switch (paneSelection1) {
+            case 0:
+                tabPaneName2 = "#importTabPane";
+                switch (paneSelection2) {
+                    case 0:
+                        tabPaneName3 = "#importInternalTabPane";
+
+                        break;
+                    case 1:
+                        tabPaneName3 = "#importExternalTabPane";
+                        break;
+                }
+                break;
+            case 1:
+                tabPaneName2 = "#exportTabPane";
+                switch (paneSelection2) {
+                    case 0:
+                        tabPaneName3 = "#exportInternalTabPane";
+                        break;
+                    case 1:
+                        tabPaneName3 = "#exportExternalTabPane";
+                        break;
+                }
+                break;
+        }
+        TabPane tabPane1 = (TabPane) popupScene.lookup(tabPaneName1);
+        TabPane tabPane2 = (TabPane) popupScene.lookup(tabPaneName2);
+        TabPane tabPane3 = (TabPane) popupScene.lookup(tabPaneName3);
+        SingleSelectionModel<Tab> selectionModel1 = tabPane1.getSelectionModel();
+        SingleSelectionModel<Tab> selectionModel2 = tabPane2.getSelectionModel();
+        SingleSelectionModel<Tab> selectionModel3 = tabPane3.getSelectionModel();
+        selectionModel1.select(paneSelection1);
+        selectionModel2.select(paneSelection2);
+        selectionModel3.select(paneSelection3);
+        popupStage.setScene(popupScene);
         popupStage.show();
     }
 
     @FXML
+    public void importContactsVCard() {
+        openInternalExternalPopup(0, 0, 0);
+    }
+
+    @FXML
     protected void importContactsCSV() {
-        mainModel.importContactsCSV();
+        openInternalExternalPopup(0, 0, 1);
     }
 
     @FXML
     protected void importInvoicesCSV() {
-        mainModel.importInvoicesCSV();
+        openInternalExternalPopup(0, 0, 2);
     }
 
     @FXML
     protected void importAllFilesZIP () {
-        mainModel.importAllFilesZIP();
+        openInternalExternalPopup(0, 0, 3);
     }
 
     @FXML
     protected void importContactsCloud () {
-        mainModel.importContactsCloud();
+        openInternalExternalPopup(0, 1, 0);
     }
 
     @FXML
     protected void importInvoicesCloud () {
-        mainModel.importInvoicesCloud();
+        openInternalExternalPopup(0, 1, 1);
     }
 
     @FXML
     protected void importAllFilesCloud () {
-        mainModel.importAllFilesCloud();
+        openInternalExternalPopup(0, 1, 2);
     }
 
     @FXML
     protected void exportContactsVCard() {
-        mainModel.exportContactsVCard();
+        openInternalExternalPopup(1, 0, 0);
     }
 
     @FXML
     protected void exportContactsCSV() {
-        mainModel.exportContactsCSV();
+        openInternalExternalPopup(1, 0, 1);
     }
 
     @FXML
     protected void exportInvoicesCSV() {
-        mainModel.exportInvoicesCSV();
+        openInternalExternalPopup(1, 0, 2);
     }
 
     @FXML
     protected void exportAllFilesZIP () {
-        mainModel.exportAllFilesZIP();
+        openInternalExternalPopup(1, 0, 3);
     }
 
     @FXML
     protected void exportContactsCloud () {
-        mainModel.exportContactsCloud();
+        openInternalExternalPopup(1, 1, 0);
     }
 
     @FXML
     protected void exportInvoicesCloud () {
-        mainModel.exportInvoicesCloud();
+        openInternalExternalPopup(1, 1, 1);
     }
 
     @FXML
     protected void exportAllFilesCloud () {
-        mainModel.exportAllFilesCloud();
+        openInternalExternalPopup(1, 1, 2);
     }
 
     @FXML

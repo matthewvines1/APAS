@@ -1,6 +1,7 @@
 package com.example.socialmediaproject;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -25,6 +26,10 @@ public class Main extends Application {
         stage.setTitle(APPLICATION_NAME);
         stage.getIcons().add(GlobalVariables.LOGO);
         stage.setScene(scene);
+        stage.setOnCloseRequest(e -> {
+            Platform.exit();
+            System.exit(0);
+        });
         stage.show();
     }
 
