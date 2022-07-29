@@ -34,8 +34,6 @@ public class MenuController {
     private ArrayList<MainModel> stateList;
     private MainModel mainModel;
 
-    private void putElementIntoTab
-
     private void openInternalExternalPopup(int paneSelection1, int paneSelection2, int paneSelection3) {
         try {
             root = FXMLLoader.load(getClass().getResource("import-export-window.fxml"));
