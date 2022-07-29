@@ -1,17 +1,13 @@
 package com.example.socialmediaproject;
 
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -21,10 +17,19 @@ public class MenuController {
 
     private final String IMPORT_EXPORT_TITLE = "Import/Export";
 
-    //Scene variables
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
+    //Import Export Variables
+    private Stage importExportPopupStage;
+    private Scene importExportScene;
+    private Parent importExportRoot;
+    private ImportExportController importExportController;
+
+    private SingleSelectionModel<Tab> selectionModel1;
+    private SingleSelectionModel<Tab> selectionModel2;
+    private SingleSelectionModel<Tab> selectionModel3;
+    private SingleSelectionModel<Tab> selectionModel4;
+    private SingleSelectionModel<Tab> selectionModel5;
+    private SingleSelectionModel<Tab> selectionModel6;
+    private SingleSelectionModel<Tab> selectionModel7;
     @FXML
     Pane contentArea;
 
@@ -34,55 +39,61 @@ public class MenuController {
     private ArrayList<MainModel> stateList;
     private MainModel mainModel;
 
-    private void openInternalExternalPopup(int paneSelection1, int paneSelection2, int paneSelection3) {
+    public MenuController() {
+        mainModel = new MainModel();
+        //Init Import Export
+        FXMLLoader loader;
         try {
-            root = FXMLLoader.load(getClass().getResource("import-export-window.fxml"));
+            loader = new FXMLLoader(getClass().getResource("import-export-window.fxml"));
+            importExportRoot = loader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Stage popupStage = new Stage();
-        popupStage.setTitle(IMPORT_EXPORT_TITLE);
-        popupStage.getIcons().add(GlobalVariables.LOGO);
-        Scene popupScene = new Scene(root, GlobalVariables.DEFAULT_POPUP_WIDTH, GlobalVariables.DEFAULT_POPUP_HEIGHT);
-        String tabPaneName1 = "#mainTabPane";
-        String tabPaneName2 = "";
-        String tabPaneName3 = "";
-        switch (paneSelection1) {
-            case 0:
-                tabPaneName2 = "#importTabPane";
-                switch (paneSelection2) {
-                    case 0:
-                        tabPaneName3 = "#importInternalTabPane";
+        importExportController = loader.getController();
+        importExportPopupStage = new Stage();
+        importExportPopupStage.setTitle(IMPORT_EXPORT_TITLE);
+        importExportPopupStage.getIcons().add(GlobalVariables.LOGO);
+        importExportPopupStage.setAlwaysOnTop(true);
+        importExportScene = new Scene(importExportRoot, GlobalVariables.DEFAULT_POPUP_WIDTH, GlobalVariables.DEFAULT_POPUP_HEIGHT);
+        selectionModel1 = ((TabPane) importExportScene.lookup("#mainTabPane")).getSelectionModel();
+        selectionModel2 = ((TabPane) importExportScene.lookup("#importTabPane")).getSelectionModel();
+        selectionModel3 = ((TabPane) importExportScene.lookup("#importInternalTabPane")).getSelectionModel();
+        selectionModel4 = ((TabPane) importExportScene.lookup("#importExternalTabPane")).getSelectionModel();
+        selectionModel5 = ((TabPane) importExportScene.lookup("#exportTabPane")).getSelectionModel();
+        selectionModel6 = ((TabPane) importExportScene.lookup("#exportInternalTabPane")).getSelectionModel();
+        selectionModel7 = ((TabPane) importExportScene.lookup("#exportExternalTabPane")).getSelectionModel();
+        //Init Edit Contacts
+    }
 
+    private void openInternalExternalPopup(int paneSelection1, int paneSelection2, int paneSelection3) {
+        selectionModel1.select(paneSelection1);
+        switch(paneSelection1){
+            case 0:
+                selectionModel2.select(paneSelection2);
+                switch(paneSelection2) {
+                    case 0:
+                        selectionModel3.select(paneSelection3);
                         break;
                     case 1:
-                        tabPaneName3 = "#importExternalTabPane";
+                        selectionModel4.select(paneSelection3);
                         break;
                 }
                 break;
             case 1:
-                tabPaneName2 = "#exportTabPane";
-                switch (paneSelection2) {
+                selectionModel5.select(paneSelection2);
+                switch(paneSelection2) {
                     case 0:
-                        tabPaneName3 = "#exportInternalTabPane";
+                        selectionModel6.select(paneSelection3);
                         break;
                     case 1:
-                        tabPaneName3 = "#exportExternalTabPane";
+                        selectionModel7.select(paneSelection3);
                         break;
                 }
                 break;
         }
-        TabPane tabPane1 = (TabPane) popupScene.lookup(tabPaneName1);
-        TabPane tabPane2 = (TabPane) popupScene.lookup(tabPaneName2);
-        TabPane tabPane3 = (TabPane) popupScene.lookup(tabPaneName3);
-        SingleSelectionModel<Tab> selectionModel1 = tabPane1.getSelectionModel();
-        SingleSelectionModel<Tab> selectionModel2 = tabPane2.getSelectionModel();
-        SingleSelectionModel<Tab> selectionModel3 = tabPane3.getSelectionModel();
-        selectionModel1.select(paneSelection1);
-        selectionModel2.select(paneSelection2);
-        selectionModel3.select(paneSelection3);
-        popupStage.setScene(popupScene);
-        popupStage.show();
+        importExportController.menuChange();
+        importExportPopupStage.setScene(importExportScene);
+        importExportPopupStage.show();
     }
 
     @FXML
