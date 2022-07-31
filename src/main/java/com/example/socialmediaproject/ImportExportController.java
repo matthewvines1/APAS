@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -53,8 +54,11 @@ public class ImportExportController {
     }
 
     public void menuChange() {
+        ImportExportContentController importExportContentController;
         try {
-            importExportContentRoot = FXMLLoader.load(getClass().getResource("import-export-content.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("import-export-content.fxml"));
+            importExportContentRoot = fxmlLoader.load();
+            importExportContentController = fxmlLoader.getController();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -70,38 +74,33 @@ public class ImportExportController {
                             switch (paneSelection3) {
                                 case 0:
                                     titleLabel.setText(TITLE_IMPORT_INTERNAL_VCARD);
-                                    importInternalTabPane.getTabs().get(0).setContent(importExportContentRoot);
                                     break;
                                 case 1:
                                     titleLabel.setText(TITLE_IMPORT_INTERNAL_CSV);
-                                    importInternalTabPane.getTabs().get(1).setContent(importExportContentRoot);
                                     break;
                                 case 2:
                                     titleLabel.setText(TITLE_IMPORT_INTERNAL_INVOICES);
-                                    importInternalTabPane.getTabs().get(2).setContent(importExportContentRoot);
                                     break;
                                 case 3:
                                     titleLabel.setText(TITLE_IMPORT_INTERNAL_ALL);
-                                    importInternalTabPane.getTabs().get(3).setContent(importExportContentRoot);
                                     break;
                             }
+                            importInternalTabPane.getTabs().get(paneSelection3).setContent(importExportContentRoot);
                             break;
                         case 1:
                             paneSelection3 = importExternalTabPane.getSelectionModel().getSelectedIndex();
                             switch (paneSelection3) {
                                 case 0:
                                     titleLabel.setText(TITLE_IMPORT_EXTERNAL_CONTACTS);
-                                    importExternalTabPane.getTabs().get(0).setContent(importExportContentRoot);
                                     break;
                                 case 1:
                                     titleLabel.setText(TITLE_IMPORT_EXTERNAL_INVOICES);
-                                    importExternalTabPane.getTabs().get(1).setContent(importExportContentRoot);
                                     break;
                                 case 2:
                                     titleLabel.setText(TITLE_IMPORT_EXTERNAL_ALL);
-                                    importExternalTabPane.getTabs().get(2).setContent(importExportContentRoot);
                                     break;
                             }
+                            importExternalTabPane.getTabs().get(paneSelection3).setContent(importExportContentRoot);
                             break;
                     }
                     break;
@@ -113,43 +112,39 @@ public class ImportExportController {
                             switch (paneSelection3) {
                                 case 0:
                                     titleLabel.setText(TITLE_EXPORT_INTERNAL_VCARD);
-                                    exportInternalTabPane.getTabs().get(0).setContent(importExportContentRoot);
                                     break;
                                 case 1:
                                     titleLabel.setText(TITLE_EXPORT_INTERNAL_CSV);
-                                    exportInternalTabPane.getTabs().get(1).setContent(importExportContentRoot);
                                     break;
                                 case 2:
                                     titleLabel.setText(TITLE_EXPORT_INTERNAL_INVOICES);
-                                    exportInternalTabPane.getTabs().get(2).setContent(importExportContentRoot);
                                     break;
                                 case 3:
                                     titleLabel.setText(TITLE_EXPORT_INTERNAL_ALL);
-                                    exportInternalTabPane.getTabs().get(3).setContent(importExportContentRoot);
                                     break;
                             }
+                            exportInternalTabPane.getTabs().get(paneSelection3).setContent(importExportContentRoot);
                             break;
                         case 1:
                             paneSelection3 = exportExternalTabPane.getSelectionModel().getSelectedIndex();
                             switch (paneSelection3) {
                                 case 0:
                                     titleLabel.setText(TITLE_EXPORT_EXTERNAL_CONTACTS);
-                                    exportExternalTabPane.getTabs().get(0).setContent(importExportContentRoot);
                                     break;
                                 case 1:
                                     titleLabel.setText(TITLE_EXPORT_EXTERNAL_INVOICES);
-                                    exportExternalTabPane.getTabs().get(1).setContent(importExportContentRoot);
                                     break;
                                 case 2:
                                     titleLabel.setText(TITLE_EXPORT_EXTERNAL_ALL);
-                                    exportExternalTabPane.getTabs().get(2).setContent(importExportContentRoot);
                                     break;
                             }
+                            exportExternalTabPane.getTabs().get(paneSelection3).setContent(importExportContentRoot);
                             break;
                     }
                     break;
             }
         }
+        importExportContentController.setStageAndSelection((Stage)mainTabPane.getScene().getWindow(), paneSelection1, paneSelection2, paneSelection3);
     }
 
     @FXML

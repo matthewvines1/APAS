@@ -8,6 +8,7 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -53,7 +54,6 @@ public class MenuController {
         importExportPopupStage = new Stage();
         importExportPopupStage.setTitle(IMPORT_EXPORT_TITLE);
         importExportPopupStage.getIcons().add(GlobalVariables.LOGO);
-        importExportPopupStage.setAlwaysOnTop(true);
         importExportScene = new Scene(importExportRoot, GlobalVariables.DEFAULT_POPUP_WIDTH, GlobalVariables.DEFAULT_POPUP_HEIGHT);
         selectionModel1 = ((TabPane) importExportScene.lookup("#mainTabPane")).getSelectionModel();
         selectionModel2 = ((TabPane) importExportScene.lookup("#importTabPane")).getSelectionModel();
@@ -93,6 +93,7 @@ public class MenuController {
         }
         importExportController.menuChange();
         importExportPopupStage.setScene(importExportScene);
+        importExportPopupStage.initModality(Modality.APPLICATION_MODAL);
         importExportPopupStage.show();
     }
 
