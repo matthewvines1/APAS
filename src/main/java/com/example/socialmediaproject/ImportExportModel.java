@@ -1,16 +1,29 @@
 package com.example.socialmediaproject;
 
+import java.io.File;
+
 public class ImportExportModel {
 
-    public void ImportExportModel() {
+    private int selection1;
+    private int selection2;
+    private int selection3;
+    private File file;
 
+    protected void setSelection(int selection1, int selection2, int selection3) {
+        this.selection1 = selection1;
+        this.selection2 = selection2;
+        this.selection3 = selection3;
+    }
+    protected void selectFile(File file) {
+        this.file = file;
     }
 
-    protected boolean importContactsVCard() {
-        return false;
+    protected boolean upload() {
+        return true;
     }
 
     protected boolean importContactsCSV() {
+        System.out.println(file.getName());
         return false;
     }
 

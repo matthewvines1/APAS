@@ -144,7 +144,8 @@ public class ImportExportController {
                     break;
             }
         }
-        importExportContentController.setStageAndSelection((Stage)mainTabPane.getScene().getWindow(), paneSelection1, paneSelection2, paneSelection3);
+        importExportModel.setSelection(paneSelection1, paneSelection2, paneSelection3);
+        importExportContentController.setStageAndSelection((Stage)mainTabPane.getScene().getWindow(), importExportModel, paneSelection1, paneSelection2, paneSelection3);
     }
 
     @FXML
@@ -205,75 +206,5 @@ public class ImportExportController {
                     }
                 }
         );
-    }
-
-    @FXML
-    protected void importContactsVCard(javafx.event.ActionEvent event) throws IOException {
-
-    }
-
-    @FXML
-    protected void importContactsCSV() {
-        importExportModel.importContactsCSV();
-    }
-
-    @FXML
-    protected void importInvoicesCSV() {
-        importExportModel.importInvoicesCSV();
-    }
-
-    @FXML
-    protected void importAllFilesZIP () {
-        importExportModel.importAllFilesZIP();
-    }
-
-    @FXML
-    protected void importContactsCloud () {
-        importExportModel.importContactsCloud();
-    }
-
-    @FXML
-    protected void importInvoicesCloud () {
-        importExportModel.importInvoicesCloud();
-    }
-
-    @FXML
-    protected void importAllFilesCloud () {
-        importExportModel.importAllFilesCloud();
-    }
-
-    @FXML
-    protected void exportContactsVCard() {
-        importExportModel.exportContactsVCard();
-    }
-
-    @FXML
-    protected void exportContactsCSV() {
-        importExportModel.exportContactsCSV();
-    }
-
-    @FXML
-    protected void exportInvoicesCSV() {
-        importExportModel.exportInvoicesCSV();
-    }
-
-    @FXML
-    protected void exportAllFilesZIP () {
-        importExportModel.exportAllFilesZIP();
-    }
-
-    @FXML
-    protected void exportContactsCloud () {
-        importExportModel.exportContactsCloud();
-    }
-
-    @FXML
-    protected void exportInvoicesCloud () {
-        importExportModel.exportInvoicesCloud();
-    }
-
-    @FXML
-    protected void exportAllFilesCloud () {
-        importExportModel.exportAllFilesCloud();
     }
 }

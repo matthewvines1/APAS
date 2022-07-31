@@ -1,38 +1,93 @@
 package com.example.socialmediaproject;
 
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 public class ImportExportContentController {
     Stage stage;
+    ImportExportModel importExportModel;
     private int paneSelection1;
     private int paneSelection2;
     private int paneSelection3;
-    private boolean isFileChooserOpen;
+    private File file;
 
     @FXML
     VBox dropTarget;
 
-    public void setStageAndSelection(Stage stage, int paneSelection1, int paneSelection2, int paneSelection3) {
+    @FXML
+    Label fileName;
+    @FXML
+    VBox uploadButtonContainer;
+
+    @FXML
+    public void initialize() {
+        uploadButtonContainer.setVisible(false);
+    }
+
+    protected void setStageAndSelection(Stage stage, ImportExportModel importExportModel, int paneSelection1, int paneSelection2, int paneSelection3) {
         this.stage = stage;
+        this.importExportModel = importExportModel;
         this.paneSelection1 = paneSelection1;
         this.paneSelection2 = paneSelection2;
         this.paneSelection3 = paneSelection3;
-        isFileChooserOpen = false;
-    }
-
-    public boolean getIsFileChooserOpen() {
-        return isFileChooserOpen;
+        if(paneSelection1 == 0 && paneSelection2 == 0) {
+            String extensionString = "";
+            switch(paneSelection3) {
+                case 0:
+                    extensionString = ".vcf";
+                    break;
+                case 1:
+                case 2:
+                    extensionString = ".csv";
+                    break;
+                case 3:
+                    extensionString = ".zip";
+                    break;
+            }
+            String finalExtensionString = extensionString;
+            dropTarget.setOnDragOver(new EventHandler<DragEvent>() {
+                @Override
+                public void handle(DragEvent dragEvent) {
+                    if(dragEvent.getGestureSource() != dropTarget && dragEvent.getDragboard().hasFiles()) {
+                        String fileName = dragEvent.getDragboard().getFiles().get(0).getName();
+                        if(fileName.length() >= finalExtensionString.length()) {
+                            if (fileName.substring(fileName.length() - finalExtensionString.length()).equalsIgnoreCase(finalExtensionString)) {
+                                dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                            }
+                        }
+                    }
+                    dragEvent.consume();
+                }
+            });
+            dropTarget.setOnDragDropped(new EventHandler<DragEvent>() {
+                @Override
+                public void handle(DragEvent dragEvent) {
+                    Dragboard db = dragEvent.getDragboard();
+                    boolean success = false;
+                    if(db.hasFiles()) {
+                        fileName.setText(db.getFiles().get(0).getName());
+                        importExportModel.selectFile(db.getFiles().get(0));
+                        uploadButtonContainer.setVisible(true);
+                        success = true;
+                    }
+                    dragEvent.setDropCompleted(success);
+                    dragEvent.consume();
+                }
+            });
+        }
     }
 
     @FXML
     protected void browseFiles() {
-        isFileChooserOpen = true;
         FileChooser fileChooser = new FileChooser();
         String title = "Select File";
         String fileExtensionFilter = "";
@@ -69,10 +124,15 @@ public class ImportExportContentController {
         }
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(fileExtensionFilterDescription, fileExtensionFilter));
         fileChooser.setTitle(title);
-        Stage tempStage = new Stage();
-        tempStage.setAlwaysOnTop(true);
-        tempStage.initModality(Modality.APPLICATION_MODAL);
-        tempStage.initOwner(stage);
-        fileChooser.showOpenDialog(tempStage);
+        file = fileChooser.showOpenDialog(stage);
+        if(file != null) {
+            fileName.setText(file.getName());
+            importExportModel.selectFile(file);
+            uploadButtonContainer.setVisible(true);
+        }
+    }
+    @FXML
+    protected void upload() {
+        importExportModel.upload();
     }
 }

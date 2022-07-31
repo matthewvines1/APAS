@@ -51,9 +51,16 @@ public class MenuController {
             throw new RuntimeException(e);
         }
         importExportController = loader.getController();
+
+        //Init Edit Contacts
+    }
+
+    @FXML
+    public void initialize() {
         importExportPopupStage = new Stage();
         importExportPopupStage.setTitle(IMPORT_EXPORT_TITLE);
         importExportPopupStage.getIcons().add(GlobalVariables.LOGO);
+        importExportPopupStage.initModality(Modality.APPLICATION_MODAL);
         importExportScene = new Scene(importExportRoot, GlobalVariables.DEFAULT_POPUP_WIDTH, GlobalVariables.DEFAULT_POPUP_HEIGHT);
         selectionModel1 = ((TabPane) importExportScene.lookup("#mainTabPane")).getSelectionModel();
         selectionModel2 = ((TabPane) importExportScene.lookup("#importTabPane")).getSelectionModel();
@@ -62,7 +69,6 @@ public class MenuController {
         selectionModel5 = ((TabPane) importExportScene.lookup("#exportTabPane")).getSelectionModel();
         selectionModel6 = ((TabPane) importExportScene.lookup("#exportInternalTabPane")).getSelectionModel();
         selectionModel7 = ((TabPane) importExportScene.lookup("#exportExternalTabPane")).getSelectionModel();
-        //Init Edit Contacts
     }
 
     private void openInternalExternalPopup(int paneSelection1, int paneSelection2, int paneSelection3) {
@@ -91,10 +97,9 @@ public class MenuController {
                 }
                 break;
         }
-        importExportController.menuChange();
         importExportPopupStage.setScene(importExportScene);
-        importExportPopupStage.initModality(Modality.APPLICATION_MODAL);
         importExportPopupStage.show();
+        importExportController.menuChange();
     }
 
     @FXML
