@@ -4,12 +4,18 @@ import static javafx.application.Platform.exit;
 
 public class MainModel {
 
+    private final String DATABASE_URL = "jdbc:mysql://localhost:3306/mysql";
+    private final String USERNAME = "root";
+    private final String PASSWORD = "Multiplexor4:1MUX";
+
     private ImportExportModel importExportModel;
     private EditContactsModel editContactsModel;
+    private DatabaseConnector databaseConnector;
 
-    public void MainModel() {
+    public MainModel() {
         importExportModel = new ImportExportModel();
         editContactsModel = new EditContactsModel();
+        databaseConnector =  new DatabaseConnector(DATABASE_URL, USERNAME, PASSWORD);
     }
 
     protected ImportExportModel getImportExportModel() {

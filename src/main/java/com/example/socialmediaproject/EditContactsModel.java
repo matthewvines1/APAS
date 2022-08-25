@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 
 public class EditContactsModel {
 
-    public void EditContactsModel() {
+    public EditContactsModel() {
 
     }
 }
