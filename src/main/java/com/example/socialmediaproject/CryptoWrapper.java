@@ -19,7 +19,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 
 public class CryptoWrapper {
 
@@ -75,14 +75,20 @@ public class CryptoWrapper {
 
     public static char[] getCipherText(Cipher cipher, char[] plainText) {
         try {
-            CharBuffer charBuffer = CharBuffer.wrap(plainText);
-            ByteBuffer byteBuffer = Charset.forName(CHARACTER_ENCODING).encode(charBuffer);
-            byte[] bytes = new byte[byteBuffer.remaining()];
-            Global.clearBytes(byteBuffer.array());
-            byteBuffer.clear();
-            Global.clearChars(charBuffer.array());
-            charBuffer.clear();
-            return Base64.encodeBase64URLSafeString(cipher.doFinal(bytes)).toCharArray();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(plainText);
+            Global.clearChars(plainText);
+            byte[] bytes = cipher.doFinal((stringBuilder.toString()).getBytes(CHARACTER_ENCODING));
+            stringBuilder.setLength(0);
+            bytes = Base64.getEncoder().encode(bytes);
+            stringBuilder = new StringBuilder();
+            for(int i = 0; i < bytes.length; i++){
+                stringBuilder.append((char)bytes[i]);
+            }
+            Global.clearBytes(bytes);
+            char[] finalArray = stringBuilder.toString().toCharArray();
+            stringBuilder.setLength(0);
+            return finalArray;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,14 +97,19 @@ public class CryptoWrapper {
 
     public static char[] getPlainText(Cipher cipher, char[] cipherText) {
         try {
-            CharBuffer charBuffer = CharBuffer.wrap(cipherText);
-            ByteBuffer byteBuffer = Charset.forName(CHARACTER_ENCODING).encode(charBuffer);
-            byte[] bytes = new byte[byteBuffer.remaining()];
-            Global.clearBytes(byteBuffer.array());
-            byteBuffer.clear();
-            Global.clearChars(charBuffer.array());
-            charBuffer.clear();
-            return new String(cipher.doFinal(Base64.decodeBase64(bytes))).toCharArray();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(cipherText);
+            Global.clearChars(cipherText);
+            byte[] bytes = cipher.doFinal(Base64.getDecoder().decode(stringBuilder.toString()));
+            stringBuilder.setLength(0);
+            stringBuilder = new StringBuilder();
+            for(int i = 0; i < bytes.length; i++){
+                stringBuilder.append((char)bytes[i]);
+            }
+            Global.clearBytes(bytes);
+            char[] finalArray = stringBuilder.toString().toCharArray();
+            stringBuilder.setLength(0);
+            return finalArray;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -142,7 +153,7 @@ public class CryptoWrapper {
             FileOutputStream fileOutputStream = new FileOutputStream(cryptoFilePath);
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, CHARACTER_ENCODING);
             BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
-            cryptoKey = Base64.encodeBase64String(keyGen.generateKey().getEncoded()).toCharArray();
+            cryptoKey = new String(Base64.getEncoder().encode(keyGen.generateKey().getEncoded())).toCharArray();
             bufferedWriter.write(cryptoKey);
             bufferedWriter.close();
             return cryptoKey;

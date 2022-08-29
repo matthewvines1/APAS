@@ -23,16 +23,14 @@ public class MainModel {
     public MainModel() {
         importExportModel = new ImportExportModel();
         editContactsModel = new EditContactsModel();
-        databaseConnector =  new DatabaseConnector(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
-        User currentUser = databaseConnector.getUser(USER_USERNAME, CryptoWrapper.generateHash(USER_USERNAME, USER_PASSWORD));
-        System.out.println(currentUser.getCreationDate());
+        //databaseConnector =  new DatabaseConnector(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+        //User currentUser = databaseConnector.getUser(USER_USERNAME, CryptoWrapper.generateHash(USER_USERNAME, USER_PASSWORD));
+        //System.out.println(currentUser.getCreationDate());
         Cipher[] ciphers = CryptoWrapper.getCipher(USER_USERNAME);
         char[] testCryptoString = "It Works!".toCharArray();
-        System.out.println(testCryptoString);
         char[] cipherText = CryptoWrapper.getCipherText(ciphers[0], testCryptoString);
-        System.out.println(Arrays.toString(cipherText));
         char[] plainText = CryptoWrapper.getPlainText(ciphers[1], cipherText);
-        System.out.println(Arrays.toString(plainText));
+        System.out.println(String.valueOf(plainText));
     }
 
     protected ImportExportModel getImportExportModel() {
