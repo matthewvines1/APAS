@@ -59,9 +59,9 @@ public class MenuController {
     public void initialize() {
         importExportPopupStage = new Stage();
         importExportPopupStage.setTitle(IMPORT_EXPORT_TITLE);
-        importExportPopupStage.getIcons().add(GlobalVariables.LOGO);
+        importExportPopupStage.getIcons().add(Global.LOGO);
         importExportPopupStage.initModality(Modality.APPLICATION_MODAL);
-        importExportScene = new Scene(importExportRoot, GlobalVariables.DEFAULT_POPUP_WIDTH, GlobalVariables.DEFAULT_POPUP_HEIGHT);
+        importExportScene = new Scene(importExportRoot, Global.DEFAULT_POPUP_WIDTH, Global.DEFAULT_POPUP_HEIGHT);
         selectionModel1 = ((TabPane) importExportScene.lookup("#mainTabPane")).getSelectionModel();
         selectionModel2 = ((TabPane) importExportScene.lookup("#importTabPane")).getSelectionModel();
         selectionModel3 = ((TabPane) importExportScene.lookup("#importInternalTabPane")).getSelectionModel();

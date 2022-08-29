@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,9 +21,9 @@ public class Main extends Application {
         this.stage = stage;
         //Start UI
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main-menu-wrapper.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), GlobalVariables.DEFAULT_WINDOW_WIDTH, GlobalVariables.DEFAULT_WINDOW_HEIGHT);
+        Scene scene = new Scene(fxmlLoader.load(), Global.DEFAULT_WINDOW_WIDTH, Global.DEFAULT_WINDOW_HEIGHT);
         stage.setTitle(APPLICATION_NAME);
-        stage.getIcons().add(GlobalVariables.LOGO);
+        stage.getIcons().add(Global.LOGO);
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {
             Platform.exit();

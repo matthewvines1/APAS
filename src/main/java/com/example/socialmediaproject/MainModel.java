@@ -2,6 +2,10 @@ package com.example.socialmediaproject;
 
 import com.example.socialmediaproject.databaseentities.User;
 
+import javax.crypto.Cipher;
+
+import java.util.Arrays;
+
 import static javafx.application.Platform.exit;
 
 public class MainModel {
@@ -15,15 +19,20 @@ public class MainModel {
     private ImportExportModel importExportModel;
     private EditContactsModel editContactsModel;
     private DatabaseConnector databaseConnector;
-    private CryptoWrapper cryptoWrapper;
 
     public MainModel() {
         importExportModel = new ImportExportModel();
         editContactsModel = new EditContactsModel();
-        cryptoWrapper = new CryptoWrapper();
         databaseConnector =  new DatabaseConnector(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
-        User currentUser = databaseConnector.getUser(USER_USERNAME, cryptoWrapper.generateHash(USER_USERNAME, USER_PASSWORD));
+        User currentUser = databaseConnector.getUser(USER_USERNAME, CryptoWrapper.generateHash(USER_USERNAME, USER_PASSWORD));
         System.out.println(currentUser.getCreationDate());
+        Cipher[] ciphers = CryptoWrapper.getCipher(USER_USERNAME);
+        char[] testCryptoString = "It Works!".toCharArray();
+        System.out.println(testCryptoString);
+        char[] cipherText = CryptoWrapper.getCipherText(ciphers[0], testCryptoString);
+        System.out.println(Arrays.toString(cipherText));
+        char[] plainText = CryptoWrapper.getPlainText(ciphers[1], cipherText);
+        System.out.println(Arrays.toString(plainText));
     }
 
     protected ImportExportModel getImportExportModel() {
