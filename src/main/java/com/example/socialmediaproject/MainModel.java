@@ -4,12 +4,17 @@ import com.example.socialmediaproject.databaseentities.User;
 
 import javax.crypto.Cipher;
 
+import java.io.BufferedWriter;
 import java.util.Arrays;
 
 import static javafx.application.Platform.exit;
 
 public class MainModel {
 
+    private final String ENCRYPTED_FILE_PATH = Global.PROGRAM_FILE_PATH + "\\EncryptedFiles";
+    private final String DATABASE_URL_FILENAME = ENCRYPTED_FILE_PATH + "\\DatabaseURL";
+    private final String DATABASE_USERNAME_FILENAME = ENCRYPTED_FILE_PATH + "\\DatabaseUsername";
+    private final String DATABASE_PASSWORD_FILENAME = ENCRYPTED_FILE_PATH + "\\DatabasePassword";
     private final String DATABASE_URL = "jdbc:mysql://localhost:3306/mysql";
     private final String DATABASE_USERNAME = "root";
     private final String DATABASE_PASSWORD = "Multiplexor4:1MUX";
@@ -23,14 +28,19 @@ public class MainModel {
     public MainModel() {
         importExportModel = new ImportExportModel();
         editContactsModel = new EditContactsModel();
-        //databaseConnector =  new DatabaseConnector(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
-        //User currentUser = databaseConnector.getUser(USER_USERNAME, CryptoWrapper.generateHash(USER_USERNAME, USER_PASSWORD));
-        //System.out.println(currentUser.getCreationDate());
-        Cipher[] ciphers = CryptoWrapper.getCipher(USER_USERNAME);
-        char[] testCryptoString = "It Works!".toCharArray();
-        char[] cipherText = CryptoWrapper.getCipherText(ciphers[0], testCryptoString);
-        char[] plainText = CryptoWrapper.getPlainText(ciphers[1], cipherText);
-        System.out.println(String.valueOf(plainText));
+        databaseConnector =  new DatabaseConnector();
+        //get buffered writers for each database parameter files, then read and decrypt and set in database connector
+        //if they do not exist prompt the user to enter them, then encrypt and store in file paths
+        BufferedWriter bufferedWriter = FileTools.getBufferedWriter(DATABASE_URL_FILENAME);
+        databaseConnector.setConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+        User currentUser = databaseConnector.getUser(USER_USERNAME, CryptoWrapper.generateHash(USER_USERNAME, USER_PASSWORD));
+
+        System.out.println(currentUser.getCreationDate());
+        //Cipher[] ciphers = CryptoWrapper.getCipher(USER_USERNAME);
+        //char[] testCryptoString = "It Works!".toCharArray();
+        //char[] cipherText = CryptoWrapper.getCipherText(ciphers[0], testCryptoString);
+        //char[] plainText = CryptoWrapper.getPlainText(ciphers[1], cipherText);
+        //System.out.println(String.valueOf(plainText));
     }
 
     protected ImportExportModel getImportExportModel() {

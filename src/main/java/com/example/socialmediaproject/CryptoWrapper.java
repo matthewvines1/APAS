@@ -24,7 +24,6 @@ import java.util.Base64;
 public class CryptoWrapper {
 
     private static final String CRYPTO_PROPERTIES_FILE_NAME = "crypto.txt";
-    private static final String CHARACTER_ENCODING = "UTF-8";
     private static final int KEY_SIZE = 256;
     //if KEY_SIZE changes, make sure to change KEY_SIZE_CHARACTER_AES
     private static final int KEY_SIZE_CHARACTER_AES = 44;
@@ -78,7 +77,7 @@ public class CryptoWrapper {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(plainText);
             Global.clearChars(plainText);
-            byte[] bytes = cipher.doFinal((stringBuilder.toString()).getBytes(CHARACTER_ENCODING));
+            byte[] bytes = cipher.doFinal((stringBuilder.toString()).getBytes(Global.CHARACTER_ENCODING));
             stringBuilder.setLength(0);
             bytes = Base64.getEncoder().encode(bytes);
             stringBuilder = new StringBuilder();
@@ -120,40 +119,31 @@ public class CryptoWrapper {
     //for now, the key is stored locally, but this will soon be moved to an online service requiring username and password
     private static char[] getEncryptionKey() {
         String cryptoFilePath = Global.PROGRAM_FILE_PATH + "\\" + CRYPTO_PROPERTIES_FILE_NAME;
+        InputStreamReader inputStreamReader = FileTools.getInputStreamReader(cryptoFilePath);
+        int currentIndex = 0;
+        int character;
         char[] cryptoKey = new char[KEY_SIZE_CHARACTER_AES];
         try {
-            Path path = Paths.get(Global.PROGRAM_FILE_PATH);
-            if (!Files.exists(path)) {
-                Files.createDirectory(path);
-            }
-            File file = new File(cryptoFilePath);
-            file.createNewFile();
-            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(
-                    cryptoFilePath), CHARACTER_ENCODING);
-            int currentIndex = 0;
-            int character;
-            while((character = inputStreamReader.read()) != -1) {
+            while ((character = inputStreamReader.read()) != -1) {
                 cryptoKey[currentIndex] = (char) character;
                 currentIndex += 1;
             }
-            if (currentIndex == KEY_SIZE_CHARACTER_AES) {
-                return cryptoKey;
-            }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        if (currentIndex == KEY_SIZE_CHARACTER_AES) {
+            return cryptoKey;
+        }
+        KeyGenerator keyGen = null;
         try {
-            KeyGenerator keyGen = null;
-            try {
-                keyGen = KeyGenerator.getInstance(ENCRYPTION_ALGORITHM);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-            keyGen.init(KEY_SIZE);
-            FileOutputStream fileOutputStream = new FileOutputStream(cryptoFilePath);
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, CHARACTER_ENCODING);
-            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
-            cryptoKey = new String(Base64.getEncoder().encode(keyGen.generateKey().getEncoded())).toCharArray();
+            keyGen = KeyGenerator.getInstance(ENCRYPTION_ALGORITHM);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        keyGen.init(KEY_SIZE);
+        BufferedWriter bufferedWriter = FileTools.getBufferedWriter(cryptoFilePath);
+        cryptoKey = new String(Base64.getEncoder().encode(keyGen.generateKey().getEncoded())).toCharArray();
+        try {
             bufferedWriter.write(cryptoKey);
             bufferedWriter.close();
             return cryptoKey;

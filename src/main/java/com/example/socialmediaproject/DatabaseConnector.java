@@ -7,8 +7,9 @@ import java.text.SimpleDateFormat;
 
 public class DatabaseConnector {
 
-    private final String SQL_GET_USER = "SELECT * FROM sys.users WHERE username=? AND password_hash=?";
-    private final String SQL_SET_USER = "INSERT INTO users (username, password_hash, has_view_role, " +
+    private final String DB_NAME = "apas";
+    private final String SQL_GET_USER = "SELECT * FROM "+DB_NAME+".users WHERE username=? AND password_hash=?";
+    private final String SQL_SET_USER = "INSERT INTO "+DB_NAME+".users (username, password_hash, has_view_role, " +
             "has_edit_role, has_delete_role, is_active, creation_date_time, last_login_date_time) VALUES (" +
             "?, ?, ?, ?, ?, ?, ?, ?)";
     private String jdbcUrl;
@@ -16,7 +17,7 @@ public class DatabaseConnector {
     private String sqlPassword;
     private User currentUser;
 
-    public DatabaseConnector(String jdbcUrl, String sqlUsername, String sqlPassword) {
+    public void setConnection(String jdbcUrl, String sqlUsername, String sqlPassword) {
         this.jdbcUrl = jdbcUrl;
         this.sqlUsername = sqlUsername;
         this.sqlPassword = sqlPassword;
