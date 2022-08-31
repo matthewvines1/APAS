@@ -12,22 +12,33 @@ public class DatabaseConnector {
     private final String SQL_SET_USER = "INSERT INTO "+DB_NAME+".users (username, password_hash, has_view_role, " +
             "has_edit_role, has_delete_role, is_active, creation_date_time, last_login_date_time) VALUES (" +
             "?, ?, ?, ?, ?, ?, ?, ?)";
-    private String jdbcUrl;
-    private String sqlUsername;
-    private String sqlPassword;
+    private char[] jdbcUrl;
+    private char[] sqlUsername;
+    private char[] sqlPassword;
     private User currentUser;
 
-    public void setConnection(String jdbcUrl, String sqlUsername, String sqlPassword) {
+    public void setConnection(char[] jdbcUrl, char[] sqlUsername, char[] sqlPassword) {
         this.jdbcUrl = jdbcUrl;
         this.sqlUsername = sqlUsername;
         this.sqlPassword = sqlPassword;
     }
 
-    public User getUser(String username, String passwordHash) {
-        try(Connection connection = DriverManager.getConnection(jdbcUrl, sqlUsername, sqlPassword);
+    public User getUser(char[] username, char[] passwordHash) {
+        StringBuilder stringBuilderUrl = new StringBuilder();
+        stringBuilderUrl.append(jdbcUrl);
+        StringBuilder stringBuilderUsername = new StringBuilder();
+        stringBuilderUsername.append(sqlUsername);
+        StringBuilder stringBuilderPassword = new StringBuilder();
+        stringBuilderPassword.append(sqlPassword);
+        StringBuilder stringBuilderUserUsername = new StringBuilder();
+        stringBuilderUsername.append(username);
+        StringBuilder stringBuilderUserPasswordHash = new StringBuilder();
+        stringBuilderUserPasswordHash.append(passwordHash);
+        try(Connection connection = DriverManager.getConnection(stringBuilderUrl.toString(),
+                stringBuilderUsername.toString(), stringBuilderPassword.toString());
             PreparedStatement statement = connection.prepareStatement(SQL_GET_USER)) {
-            statement.setString(1, username);
-            statement.setString(2, passwordHash);
+            statement.setString(1, stringBuilderUserUsername.toString());
+            statement.setString(2, stringBuilderUserPasswordHash.toString());
             try(ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     currentUser = new User(username, passwordHash,
@@ -39,6 +50,11 @@ public class DatabaseConnector {
                             resultSet.getTime("creation_date_time"),
                             resultSet.getDate("last_login_date_time"),
                             resultSet.getTime("last_login_date_time"));
+                    stringBuilderUrl.setLength(0);
+                    stringBuilderUsername.setLength(0);
+                    stringBuilderPassword.setLength(0);
+                    stringBuilderUserUsername.setLength(0);
+                    stringBuilderUserPasswordHash.setLength(0);
                     return currentUser;
                 }
             } catch (SQLException e) {
@@ -47,19 +63,35 @@ public class DatabaseConnector {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        stringBuilderUrl.setLength(0);
+        stringBuilderUsername.setLength(0);
+        stringBuilderPassword.setLength(0);
+        stringBuilderUserUsername.setLength(0);
+        stringBuilderUserPasswordHash.setLength(0);
         return null;
     }
 
     public void setUser(User user) {
         if (currentUser.getIsActive() && currentUser.getEditRole()) {
-            try (Connection connection = DriverManager.getConnection(jdbcUrl, sqlUsername, sqlPassword);
+            StringBuilder stringBuilderUrl = new StringBuilder();
+            stringBuilderUrl.append(jdbcUrl);
+            StringBuilder stringBuilderUsername = new StringBuilder();
+            stringBuilderUsername.append(sqlUsername);
+            StringBuilder stringBuilderPassword = new StringBuilder();
+            stringBuilderPassword.append(sqlPassword);
+            try (Connection connection = DriverManager.getConnection(stringBuilderUrl.toString(),
+                    stringBuilderUsername.toString(), stringBuilderPassword.toString());
                  PreparedStatement statement = connection.prepareStatement(SQL_SET_USER)) {
                 String creationDateTime = (new SimpleDateFormat("yyyy-MM-dd")).format(user.getCreationDate()) +
                         " " + (new SimpleDateFormat("HH:mm:ss")).format(user.getCreationTime());
                 String lastLoginDateTime = (new SimpleDateFormat("yyyy-MM-dd")).format(user.getLastLoginDate()) +
                         " " + (new SimpleDateFormat("HH:mm:ss")).format(user.getLastLoginTime());
-                statement.setString(1, user.getUsername());
-                statement.setString(2, user.getPasswordHash());
+                StringBuilder stringBuilderUserUsername = new StringBuilder();
+                stringBuilderUserUsername.append(user.getUsername());
+                StringBuilder stringBuilderUserPasswordHash = new StringBuilder();
+                stringBuilderUserPasswordHash.append(user.getPasswordHash());
+                statement.setString(1, stringBuilderUserUsername.toString());
+                statement.setString(2, stringBuilderUserPasswordHash.toString());
                 statement.setBoolean(3, user.getViewRole() && currentUser.getViewRole());
                 statement.setBoolean(4, user.getEditRole());
                 statement.setBoolean(5, user.getDeleteRole() && currentUser.getDeleteRole());
@@ -67,9 +99,14 @@ public class DatabaseConnector {
                 statement.setString(7, creationDateTime);
                 statement.setString(8, lastLoginDateTime);
                 statement.executeUpdate();
+                stringBuilderUserUsername.setLength(0);
+                stringBuilderUserPasswordHash.setLength(0);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+            stringBuilderUrl.setLength(0);
+            stringBuilderUsername.setLength(0);
+            stringBuilderPassword.setLength(0);
         }
     }
 }
