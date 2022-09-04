@@ -4,6 +4,7 @@ import com.example.socialmediaproject.databaseentities.User;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 public class DatabaseConnector {
 
@@ -31,12 +32,14 @@ public class DatabaseConnector {
         StringBuilder stringBuilderPassword = new StringBuilder();
         stringBuilderPassword.append(sqlPassword);
         StringBuilder stringBuilderUserUsername = new StringBuilder();
-        stringBuilderUsername.append(username);
+        stringBuilderUserUsername.append(username);
         StringBuilder stringBuilderUserPasswordHash = new StringBuilder();
         stringBuilderUserPasswordHash.append(passwordHash);
-        try(Connection connection = DriverManager.getConnection(stringBuilderUrl.toString(),
+        try {
+            //System.out.println(Arrays.toString(jdbcUrl) + "\n" + stringBuilderUsername + "\n" + stringBuilderPassword);
+            Connection connection = DriverManager.getConnection(stringBuilderUrl.toString(),
                 stringBuilderUsername.toString(), stringBuilderPassword.toString());
-            PreparedStatement statement = connection.prepareStatement(SQL_GET_USER)) {
+            PreparedStatement statement = connection.prepareStatement(SQL_GET_USER);
             statement.setString(1, stringBuilderUserUsername.toString());
             statement.setString(2, stringBuilderUserPasswordHash.toString());
             try(ResultSet resultSet = statement.executeQuery()) {
@@ -71,7 +74,8 @@ public class DatabaseConnector {
         return null;
     }
 
-    public void setUser(User user) {
+    public boolean setUser(User user) {
+        boolean isSuccess = false;
         if (currentUser.getIsActive() && currentUser.getEditRole()) {
             StringBuilder stringBuilderUrl = new StringBuilder();
             stringBuilderUrl.append(jdbcUrl);
@@ -101,6 +105,7 @@ public class DatabaseConnector {
                 statement.executeUpdate();
                 stringBuilderUserUsername.setLength(0);
                 stringBuilderUserPasswordHash.setLength(0);
+                isSuccess = true;
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -108,5 +113,6 @@ public class DatabaseConnector {
             stringBuilderUsername.setLength(0);
             stringBuilderPassword.setLength(0);
         }
+        return isSuccess;
     }
 }

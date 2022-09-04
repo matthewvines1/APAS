@@ -11,6 +11,7 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class CryptoWrapper {
@@ -98,6 +99,9 @@ public class CryptoWrapper {
     }
 
     public static char[] getPlainText(Cipher cipher, char[] cipherText) {
+        if(cipherText == null) {
+            return null;
+        }
         try {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(cipherText);
@@ -121,8 +125,8 @@ public class CryptoWrapper {
     //this function gets the encryption key used to encrypt and decrypt all sensitive information
     //for now, the key is stored locally, but this will soon be moved to an online service requiring username and password
     private static char[] getEncryptionKey() {
-        String cryptoFilePath = Global.PROGRAM_FILE_PATH + "\\" + CRYPTO_PROPERTIES_FILE_NAME;
-        InputStreamReader inputStreamReader = FileTools.getInputStreamReader(cryptoFilePath);
+        InputStreamReader inputStreamReader = FileTools.getInputStreamReader(Global.PROGRAM_FILE_PATH,
+                CRYPTO_PROPERTIES_FILE_NAME);
         int currentIndex = 0;
         int character;
         char[] cryptoKey = new char[KEY_SIZE_CHARACTER_AES];
@@ -144,7 +148,8 @@ public class CryptoWrapper {
             e.printStackTrace();
         }
         keyGen.init(KEY_SIZE);
-        BufferedWriter bufferedWriter = FileTools.getBufferedWriter(cryptoFilePath);
+        BufferedWriter bufferedWriter = FileTools.getBufferedWriter(Global.PROGRAM_FILE_PATH,
+                CRYPTO_PROPERTIES_FILE_NAME);
         cryptoKey = new String(Base64.getEncoder().encode(keyGen.generateKey().getEncoded())).toCharArray();
         try {
             bufferedWriter.write(cryptoKey);

@@ -1,17 +1,19 @@
 package com.example.socialmediaproject;
 
 import java.io.*;
-import java.nio.CharBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class FileTools {
 
     private static final int MAX_CHARACTER_COUNT = 128;
 
-    public static final BufferedWriter getBufferedWriter(String filePath) {
-        createProgramFilesPath(Global.PROGRAM_FILE_PATH);
+    public static final BufferedWriter getBufferedWriter(String filePath, String fileName) {
+        createPath(Global.PROGRAM_FILE_PATH);
+        createPath(filePath);
+        filePath = filePath + "\\" + fileName;
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath);
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Global.CHARACTER_ENCODING);
@@ -22,8 +24,10 @@ public class FileTools {
         return null;
     }
 
-    public static final InputStreamReader getInputStreamReader(String filePath) {
-        createProgramFilesPath(Global.PROGRAM_FILE_PATH);
+    public static final InputStreamReader getInputStreamReader(String filePath, String fileName) {
+        createPath(Global.PROGRAM_FILE_PATH);
+        createPath(filePath);
+        filePath = filePath + "\\" + fileName;
         try {
             File file = new File(filePath);
             file.createNewFile();
@@ -34,18 +38,20 @@ public class FileTools {
         return null;
     }
 
-    public static final void setFileByCharArray(String filePath, char[] chars) {
+    public static final void setFileByCharArray(String filePath, String fileName, char[] chars) {
         try {
-            BufferedWriter bufferedWriter = getBufferedWriter(filePath);
+            BufferedWriter bufferedWriter = getBufferedWriter(filePath, fileName);
             bufferedWriter.write(chars);
+            bufferedWriter.flush();
+            bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static final char[] getCharArrayByFile(String filePath) {
+    public static final char[] getCharArrayByFile(String filePath, String fileName) {
         char[] tempArray = new char[MAX_CHARACTER_COUNT];
-        InputStreamReader inputStreamReader = getInputStreamReader(filePath);
+        InputStreamReader inputStreamReader = getInputStreamReader(filePath, fileName);
         int currentIndex = 0;
         try {
             int character;
@@ -53,13 +59,14 @@ public class FileTools {
                 tempArray[currentIndex] = (char) character;
                 currentIndex += 1;
             }
+            inputStreamReader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         if(currentIndex > 0) {
             char[] finalArray = new char[currentIndex];
             for(int i = 0; i < currentIndex; i++) {
-                finalArray[currentIndex] = tempArray[currentIndex];
+                finalArray[i] = tempArray[i];
             }
             Global.clearChars(tempArray);
             return finalArray;
@@ -67,7 +74,7 @@ public class FileTools {
         return null;
     }
 
-    private static void createProgramFilesPath(String pathString) {
+    private static void createPath(String pathString) {
         try {
             Path path = Paths.get(pathString);
             if (!Files.exists(path)) {

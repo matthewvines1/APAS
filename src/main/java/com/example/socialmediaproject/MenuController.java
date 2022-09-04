@@ -51,7 +51,6 @@ public class MenuController {
             throw new RuntimeException(e);
         }
         importExportController = loader.getController();
-
         //Init Edit Contacts
     }
 
@@ -62,13 +61,20 @@ public class MenuController {
         importExportPopupStage.getIcons().add(Global.LOGO);
         importExportPopupStage.initModality(Modality.APPLICATION_MODAL);
         importExportScene = new Scene(importExportRoot, Global.DEFAULT_POPUP_WIDTH, Global.DEFAULT_POPUP_HEIGHT);
-        selectionModel1 = ((TabPane) importExportScene.lookup("#mainTabPane")).getSelectionModel();
-        selectionModel2 = ((TabPane) importExportScene.lookup("#importTabPane")).getSelectionModel();
-        selectionModel3 = ((TabPane) importExportScene.lookup("#importInternalTabPane")).getSelectionModel();
-        selectionModel4 = ((TabPane) importExportScene.lookup("#importExternalTabPane")).getSelectionModel();
-        selectionModel5 = ((TabPane) importExportScene.lookup("#exportTabPane")).getSelectionModel();
-        selectionModel6 = ((TabPane) importExportScene.lookup("#exportInternalTabPane")).getSelectionModel();
-        selectionModel7 = ((TabPane) importExportScene.lookup("#exportExternalTabPane")).getSelectionModel();
+        TabPane tabPane1 = (TabPane) importExportScene.lookup("#mainTabPane");
+        TabPane tabPane2 = (TabPane) importExportScene.lookup("#importTabPane");
+        TabPane tabPane3 = (TabPane) importExportScene.lookup("#importInternalTabPane");
+        TabPane tabPane4 = (TabPane) importExportScene.lookup("#importExternalTabPane");
+        TabPane tabPane5 = (TabPane) importExportScene.lookup("#exportTabPane");
+        TabPane tabPane6 = (TabPane) importExportScene.lookup("#exportInternalTabPane");
+        TabPane tabPane7 = (TabPane) importExportScene.lookup("#exportExternalTabPane");
+        selectionModel1 = tabPane1.getSelectionModel();
+        selectionModel2 = tabPane2.getSelectionModel();
+        selectionModel3 = tabPane3.getSelectionModel();
+        selectionModel4 = tabPane4.getSelectionModel();
+        selectionModel5 = tabPane5.getSelectionModel();
+        selectionModel6 = tabPane6.getSelectionModel();
+        selectionModel7 = tabPane7.getSelectionModel();
     }
 
     private void openInternalExternalPopup(int paneSelection1, int paneSelection2, int paneSelection3) {
