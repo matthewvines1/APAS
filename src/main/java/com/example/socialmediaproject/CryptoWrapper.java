@@ -78,6 +78,7 @@ public class CryptoWrapper {
 
     public static char[] getCipherText(Cipher cipher, char[] plainText) {
         try {
+            log("getCipherText", "plainText = " + Arrays.toString(plainText));
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(plainText);
             Global.clearChars(plainText);
@@ -159,5 +160,9 @@ public class CryptoWrapper {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static void log(String functionName, String message) {
+        Global.log("CryptoWrapper", functionName, message);
     }
 }

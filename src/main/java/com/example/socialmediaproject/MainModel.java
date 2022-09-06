@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import javax.crypto.Cipher;
 
 import java.io.IOException;
-import java.sql.Array;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Arrays;
@@ -39,7 +38,7 @@ public class MainModel {
     private char[] userPasswordHash;
     User currentUser;
     Cipher[] ciphers;
-
+    boolean isCreatingAccount;
     private ImportExportModel importExportModel;
     private EditContactsModel editContactsModel;
     private DatabaseConnector databaseConnector;
@@ -73,8 +72,8 @@ public class MainModel {
                 if (usernameTextField.getText().isEmpty() || passwordTextField.getText().isEmpty()) {
                     showErrorMessage("Please Enter Username and Password");
                 } else {
+                    userUsername = usernameTextField.getText().toLowerCase().toCharArray();
                     if (isLoggingIn[0]) {
-                        userUsername = usernameTextField.getText().toLowerCase().toCharArray();
                         userPasswordHash = CryptoWrapper.generateHash(userUsername, passwordTextField.getText().
                                 toCharArray());
                         ciphers = CryptoWrapper.getCipher(userPasswordHash);
@@ -84,7 +83,6 @@ public class MainModel {
                             startAfterAuthentication();
                         }
                     } else {
-                        userUsername = usernameTextField.getText().toLowerCase().toCharArray();
                         boolean isError = false;
                         if (passwordTextField.getLength() != confirmPasswordTextField.getLength()) {
                             isError = true;
@@ -102,11 +100,8 @@ public class MainModel {
                             userPasswordHash = CryptoWrapper.generateHash(userUsername, passwordTextField.getText().
                                     toCharArray());
                             ciphers = CryptoWrapper.getCipher(userPasswordHash);
-                            if (!tryDatabaseConnection()) {
-                                openPopupDatabaseCredentials();
-                            } else {
-                                startAfterAuthentication();
-                            }
+                            isCreatingAccount = true;
+                            openPopupDatabaseCredentials();
                         }
                     }
                 }
@@ -115,6 +110,7 @@ public class MainModel {
         redirectButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                isCreatingAccount = false;
                 if(isLoggingIn[0]) {
                     isLoggingIn[0] = false;
                     loginButton.setText("Create Account");
@@ -203,6 +199,7 @@ public class MainModel {
     }
 
     public boolean setLocalAndFileDatabase(char[] databaseUrl, char[] databaseUsername, char[] databasePassword) {
+        log("setLocalAndFileDatabase", Arrays.toString(databaseUrl));
         FileTools.setFileByCharArray(ENCRYPTED_FILE_PATH, DATABASE_URL_FILENAME, CryptoWrapper.getCipherText(ciphers[0], databaseUrl));
         FileTools.setFileByCharArray(ENCRYPTED_FILE_PATH, DATABASE_USERNAME_FILENAME, CryptoWrapper.getCipherText(ciphers[0],
                 databaseUsername));
@@ -212,17 +209,13 @@ public class MainModel {
     }
 
     public boolean createDatabaseConnection() {
-        if (databaseUrl != null && databaseUsername != null && databasePassword != null) {
+        if(databaseUrl != null && databaseUsername != null && databasePassword != null) {
             databaseConnector.setConnection(databaseUrl, databaseUsername, databasePassword);
-            currentUser = databaseConnector.getUser(userUsername, userPasswordHash);
-            if(currentUser == null) {
-                if(databaseConnector.setUser(new User(userUsername, userPasswordHash, false, false,
-                        false, true, new Date(System.currentTimeMillis()),
-                        new Time(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
-                        new Time(System.currentTimeMillis())))) {
-                    currentUser = databaseConnector.getUser(userUsername, userPasswordHash);
-                }
+            if(isCreatingAccount) {
+                databaseConnector.newUser(userUsername, userPasswordHash);
             }
+            isCreatingAccount = false;
+            currentUser = databaseConnector.getUser(userUsername, userPasswordHash);
             return currentUser != null;
         }
         return false;
@@ -323,5 +316,9 @@ public class MainModel {
         tempStage.initModality(Modality.APPLICATION_MODAL);
         this.tempStage = tempStage;
         return new Scene(tempRoot, Global.DEFAULT_POPUP_WIDTH, Global.DEFAULT_POPUP_HEIGHT);
+    }
+
+    private void log(String functionName, String message) {
+        Global.log("MainModel", functionName, message);
     }
 }

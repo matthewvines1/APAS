@@ -23,7 +23,7 @@ public class ImportExportModel {
     }
 
     protected boolean importContactsCSV() {
-        System.out.println(file.getName());
+        //System.out.println(file.getName());
         return false;
     }
 

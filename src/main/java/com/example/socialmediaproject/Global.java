@@ -21,4 +21,8 @@ public class Global {
     public static final void clearChars(char[] chars) {
         Arrays.fill(chars, (char)0);
     }
+
+    public static final void log(String className, String functionName, String message) {
+        System.out.println(className + " - " + functionName + " : " + message + "\n");
+    }
 }

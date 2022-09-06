@@ -84,4 +84,8 @@ public class FileTools {
             e.printStackTrace();
         }
     }
+
+    private static void log(String functionName, String message) {
+        Global.log("FileTools", functionName, message);
+    }
 }
