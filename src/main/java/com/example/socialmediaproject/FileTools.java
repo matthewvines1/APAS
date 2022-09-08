@@ -4,8 +4,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-
 public class FileTools {
 
     private static final int MAX_CHARACTER_COUNT = 128;
@@ -19,7 +17,7 @@ public class FileTools {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Global.CHARACTER_ENCODING);
             return new BufferedWriter(outputStreamWriter);
         } catch (Exception e) {
-            e.printStackTrace();
+            log("getBufferedWriter", e.toString());
         }
         return null;
     }
@@ -33,7 +31,7 @@ public class FileTools {
             file.createNewFile();
             return new InputStreamReader(new FileInputStream(filePath), Global.CHARACTER_ENCODING);
         } catch (Exception e) {
-            e.printStackTrace();
+            log("getInputStreamReader", e.toString());
         }
         return null;
     }
@@ -45,7 +43,7 @@ public class FileTools {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log("setFileByCharArray", e.toString());
         }
     }
 
@@ -61,7 +59,7 @@ public class FileTools {
             }
             inputStreamReader.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log("getCharArrayByFile", e.toString());
         }
         if(currentIndex > 0) {
             char[] finalArray = new char[currentIndex];
@@ -81,7 +79,7 @@ public class FileTools {
                 Files.createDirectory(path);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log("createPath", e.toString());
         }
     }
 

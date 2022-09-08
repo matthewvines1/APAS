@@ -4,8 +4,6 @@ import com.example.socialmediaproject.databaseentities.User;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Calendar;
 
 public class DatabaseConnector {
@@ -24,7 +22,6 @@ public class DatabaseConnector {
         this.jdbcUrl = jdbcUrl;
         this.sqlUsername = sqlUsername;
         this.sqlPassword = sqlPassword;
-        log("setConnection", Arrays.toString(jdbcUrl) + "\n" + Arrays.toString(sqlUsername) + "\n" + Arrays.toString(sqlPassword));
     }
 
     public User getUser(char[] username, char[] passwordHash) {
@@ -43,7 +40,6 @@ public class DatabaseConnector {
         StringBuilder stringBuilderUserPasswordHash = new StringBuilder();
         stringBuilderUserPasswordHash.append(passwordHash);
         try {
-            log("getUser", stringBuilderUrl + "\n" + stringBuilderUsername + "\n" + stringBuilderPassword);
             connection = DriverManager.getConnection(stringBuilderUrl.toString(), stringBuilderUsername.toString(), stringBuilderPassword.toString());
             statement = connection.prepareStatement(SQL_GET_USER);
             statement.setString(1, stringBuilderUserUsername.toString());
@@ -51,7 +47,7 @@ public class DatabaseConnector {
             try {
                 resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    currentUser = new User(username, passwordHash,
+                    currentUser = new User(resultSet.getInt("id"), username, passwordHash,
                             resultSet.getBoolean("has_view_role"),
                             resultSet.getBoolean("has_edit_role"),
                             resultSet.getBoolean("has_delete_role"),
@@ -62,10 +58,10 @@ public class DatabaseConnector {
                             resultSet.getTime("last_login_date_time"));
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                log("getUser", e.toString());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log("getUser", e.toString());
         } finally {
             closeDatabase(resultSet, statement, connection);
         }
@@ -112,7 +108,7 @@ public class DatabaseConnector {
                 stringBuilderUserPasswordHash.setLength(0);
                 isSuccess = true;
             } catch (SQLException e) {
-                e.printStackTrace();
+                log("newUser", e.toString());
             } finally {
                 closeDatabase(null, statement, connection);
             }
@@ -153,7 +149,7 @@ public class DatabaseConnector {
             statement.executeUpdate();
             isSuccess = true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            log("newUser", e.toString());
         } finally {
             closeDatabase(null, statement, connection);
         }
@@ -169,21 +165,21 @@ public class DatabaseConnector {
             try {
                 resultSet.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                log("closeDatabase", e.toString());
             }
         }
         if(preparedStatement != null) {
             try {
                 preparedStatement.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                log("closeDatabase", e.toString());
             }
         }
         if(connection != null) {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                log("closeDatabase", e.toString());
             }
         }
     }

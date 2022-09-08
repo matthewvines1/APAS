@@ -11,7 +11,6 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 
 public class CryptoWrapper {
@@ -45,7 +44,7 @@ public class CryptoWrapper {
             generatedPassword = sb.toString().toCharArray();
             sb.setLength(0);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log("generateHash", e.toString());
         }
         return generatedPassword;
     }
@@ -71,17 +70,15 @@ public class CryptoWrapper {
             cipherArray[1] = decryptCipher;
             return cipherArray;
         } catch (Exception e) {
-            e.printStackTrace();
+            log("getCipher", e.toString());
         }
         return null;
     }
 
     public static char[] getCipherText(Cipher cipher, char[] plainText) {
         try {
-            log("getCipherText", "plainText = " + Arrays.toString(plainText));
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(plainText);
-            Global.clearChars(plainText);
             byte[] bytes = cipher.doFinal((stringBuilder.toString()).getBytes(Global.CHARACTER_ENCODING));
             stringBuilder.setLength(0);
             bytes = Base64.getEncoder().encode(bytes);
@@ -94,7 +91,7 @@ public class CryptoWrapper {
             stringBuilder.setLength(0);
             return finalArray;
         } catch (Exception e) {
-            e.printStackTrace();
+            log("getCipherText", e.toString());
         }
         return null;
     }
@@ -118,7 +115,7 @@ public class CryptoWrapper {
             stringBuilder.setLength(0);
             return finalArray;
         } catch (Exception e) {
-            e.printStackTrace();
+            log("getPlainText", e.toString());
         }
         return null;
     }
@@ -137,7 +134,7 @@ public class CryptoWrapper {
                 currentIndex += 1;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log("getEncryptionKey", e.toString());
         }
         if (currentIndex == KEY_SIZE_CHARACTER_AES) {
             return cryptoKey;
@@ -146,7 +143,7 @@ public class CryptoWrapper {
         try {
             keyGen = KeyGenerator.getInstance(ENCRYPTION_ALGORITHM);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log("getEncryptionKey", e.toString());
         }
         keyGen.init(KEY_SIZE);
         BufferedWriter bufferedWriter = FileTools.getBufferedWriter(Global.PROGRAM_FILE_PATH,
@@ -157,7 +154,7 @@ public class CryptoWrapper {
             bufferedWriter.close();
             return cryptoKey;
         } catch (IOException e) {
-            e.printStackTrace();
+            log("getEncryptionKey", e.toString());
         }
         return null;
     }

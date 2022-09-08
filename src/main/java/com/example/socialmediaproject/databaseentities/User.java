@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Time;
 
 public class User {
+    private int userId;
     private char[] username;
     private char[] passwordHash;
     private boolean hasViewRole;
@@ -15,9 +16,10 @@ public class User {
     private Date lastLoginDate;
     private Time lastLoginTime;
 
-    public User(char[] username, char[] passwordHash, boolean hasViewRole, boolean hasEditRole,
+    public User(int id, char[] username, char[] passwordHash, boolean hasViewRole, boolean hasEditRole,
                 boolean hasDeleteRole, boolean isActive, Date creationDate, Time creationTime, Date lastLoginDate,
                 Time lastLoginTime) {
+        this.userId = id;
         this.username = username;
         this.passwordHash = passwordHash;
         this.hasViewRole = hasViewRole;
@@ -28,6 +30,10 @@ public class User {
         this.creationTime = creationTime;
         this.lastLoginDate = lastLoginDate;
         this.lastLoginTime = lastLoginTime;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public char[] getUsername() {
@@ -68,6 +74,10 @@ public class User {
 
     public Time getLastLoginTime() {
         return lastLoginTime;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void setUsername(char[] username) {

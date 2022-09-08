@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -16,9 +17,6 @@ import javafx.stage.Stage;
 import javax.crypto.Cipher;
 
 import java.io.IOException;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.Arrays;
 
 import static javafx.application.Platform.exit;
 
@@ -31,6 +29,8 @@ public class MainModel {
     private final String LOGIN_TITLE = "APAS Login";
     private final String DATABASE_CREDENTIALS_TITLE = "Database Credentials";
     private final String CREATE_ACCOUNT_TITLE = "APAS Create Account";
+    private final String DEFAULT_DATABASE_URL = "jdbc:mysql://localhost:3306/mysql";
+    private final String DEFAULT_DATABASE_USERNAME = "root";
     private char[] databaseUrl;
     private char[] databaseUsername;
     private char[] databasePassword;
@@ -58,10 +58,10 @@ public class MainModel {
         final boolean[] isLoggingIn = {true};
         Scene loginScene = openPopup(LOGIN_TITLE, "login.fxml");
         TextField usernameTextField = (TextField) loginScene.lookup("#UsernameTextField");
-        TextField passwordTextField = (TextField) loginScene.lookup("#PasswordTextField");
-        TextField confirmPasswordTextField = (TextField) loginScene.lookup("#ConfirmPasswordTextField");
+        PasswordField passwordPasswordField = (PasswordField) loginScene.lookup("#PasswordPasswordField");
+        PasswordField confirmPasswordPasswordField = (PasswordField) loginScene.lookup("#ConfirmPasswordPasswordField");
         Label confirmPasswordLabel = (Label) loginScene.lookup("#ConfirmPasswordLabel");
-        confirmPasswordTextField.setVisible(false);
+        confirmPasswordPasswordField.setVisible(false);
         confirmPasswordLabel.setVisible(false);
         loginStage = tempStage;
         Button loginButton = (Button) loginScene.lookup("#SubmitButton");
@@ -69,12 +69,12 @@ public class MainModel {
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if (usernameTextField.getText().isEmpty() || passwordTextField.getText().isEmpty()) {
-                    showErrorMessage("Please Enter Username and Password");
+                if (usernameTextField.getText().isEmpty() || passwordPasswordField.getText().isEmpty()) {
+                    log("openPopupLogin", "Please Enter Username and Password");
                 } else {
                     userUsername = usernameTextField.getText().toLowerCase().toCharArray();
                     if (isLoggingIn[0]) {
-                        userPasswordHash = CryptoWrapper.generateHash(userUsername, passwordTextField.getText().
+                        userPasswordHash = CryptoWrapper.generateHash(userUsername, passwordPasswordField.getText().
                                 toCharArray());
                         ciphers = CryptoWrapper.getCipher(userPasswordHash);
                         if (!tryDatabaseConnection()) {
@@ -84,20 +84,20 @@ public class MainModel {
                         }
                     } else {
                         boolean isError = false;
-                        if (passwordTextField.getLength() != confirmPasswordTextField.getLength()) {
+                        if (passwordPasswordField.getLength() != confirmPasswordPasswordField.getLength()) {
                             isError = true;
                         } else {
-                            for (int i = 0; i < passwordTextField.getLength(); i++) {
-                                if(passwordTextField.getText().toCharArray()[i] != confirmPasswordTextField.getText().
+                            for (int i = 0; i < passwordPasswordField.getLength(); i++) {
+                                if(passwordPasswordField.getText().toCharArray()[i] != confirmPasswordPasswordField.getText().
                                         toCharArray()[i]) {
                                     isError = true;
                                 }
                             }
                         }
                         if(isError) {
-                            showErrorMessage("Passwords Do Not Match");
+                            log("openPopupLogin", "Passwords Do Not Match");
                         } else {
-                            userPasswordHash = CryptoWrapper.generateHash(userUsername, passwordTextField.getText().
+                            userPasswordHash = CryptoWrapper.generateHash(userUsername, passwordPasswordField.getText().
                                     toCharArray());
                             ciphers = CryptoWrapper.getCipher(userPasswordHash);
                             isCreatingAccount = true;
@@ -115,14 +115,16 @@ public class MainModel {
                     isLoggingIn[0] = false;
                     loginButton.setText("Create Account");
                     redirectButton.setText("Go To Log In");
-                    confirmPasswordTextField.setVisible(true);
+                    confirmPasswordPasswordField.setVisible(true);
                     confirmPasswordLabel.setVisible(true);
+                    loginStage.titleProperty().setValue(CREATE_ACCOUNT_TITLE);
                 } else {
                     isLoggingIn[0] = true;
                     loginButton.setText("Log In");
                     redirectButton.setText("Go To Create Account");
-                    confirmPasswordTextField.setVisible(false);
+                    confirmPasswordPasswordField.setVisible(false);
                     confirmPasswordLabel.setVisible(false);
+                    loginStage.titleProperty().setValue(LOGIN_TITLE);
                 }
             }
         });
@@ -140,17 +142,21 @@ public class MainModel {
         databaseCredentialsStage = tempStage;
         Button submitButton = (Button) databaseCredentialsScene.lookup("#SubmitButton");
         Button backToAuthenticationButton = (Button) databaseCredentialsScene.lookup("#BackToAuthenticationButton");
+        TextField databaseUrlTextField = (TextField) databaseCredentialsScene.lookup("#DatabaseUrlTextField");
+        TextField databaseUsernameTextField = (TextField) databaseCredentialsScene.lookup("#DatabaseUsernameTextField");
+        PasswordField databasePasswordPasswordField = (PasswordField) databaseCredentialsScene.lookup("#DatabasePasswordPasswordField");
+        databaseUrlTextField.setText(DEFAULT_DATABASE_URL);
+        databaseUsernameTextField.setText(DEFAULT_DATABASE_USERNAME);
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(setLocalAndFileDatabase(((TextField) databaseCredentialsScene.lookup("#DatabaseUrlTextField")).
-                        getText().toCharArray(), ((TextField) databaseCredentialsScene.
-                        lookup("#DatabaseUsernameTextField")).getText().toCharArray(), ((TextField)
-                        databaseCredentialsScene.lookup("#DatabasePasswordTextField")).getText().toCharArray())) {
+                if(setLocalAndFileDatabase(databaseUrlTextField.getText().toCharArray(),
+                        databaseUsernameTextField.getText().toCharArray(),
+                        databasePasswordPasswordField.getText().toCharArray())) {
                     startAfterAuthentication();
                     databaseCredentialsStage.close();
                 } else {
-                    showErrorMessage("Database Connection Failed. Check Username, Password, Database URL, " +
+                    log("openPopupDatabaseCredentials", "Database Connection Failed. Check Username, Password, Database URL, " +
                             "Database Username, and/or Database Password.");
                 }
             }
@@ -172,14 +178,18 @@ public class MainModel {
     }
 
     private boolean tryDatabaseConnection() {
-        setLocalDatabaseUrlByFile();
-        setLocalDatabaseUsernameByFile();
-        setLocalDatabasePasswordByFile();
         boolean isSuccess = false;
         try {
-            isSuccess = createDatabaseConnection();
+            setLocalDatabaseUrlByFile();
+            setLocalDatabaseUsernameByFile();
+            setLocalDatabasePasswordByFile();
+            try {
+                isSuccess = createDatabaseConnection();
+            } catch (Exception e) {
+                log("tryDatabaseConnection", e.toString());
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            log("tryDatabaseConnection", e.toString());
         }
         return isSuccess;
     }
@@ -199,13 +209,22 @@ public class MainModel {
     }
 
     public boolean setLocalAndFileDatabase(char[] databaseUrl, char[] databaseUsername, char[] databasePassword) {
-        log("setLocalAndFileDatabase", Arrays.toString(databaseUrl));
-        FileTools.setFileByCharArray(ENCRYPTED_FILE_PATH, DATABASE_URL_FILENAME, CryptoWrapper.getCipherText(ciphers[0], databaseUrl));
+        char[] cipherText = CryptoWrapper.getCipherText(ciphers[0], databaseUrl);
+        FileTools.setFileByCharArray(ENCRYPTED_FILE_PATH, DATABASE_URL_FILENAME, cipherText);
         FileTools.setFileByCharArray(ENCRYPTED_FILE_PATH, DATABASE_USERNAME_FILENAME, CryptoWrapper.getCipherText(ciphers[0],
                 databaseUsername));
         FileTools.setFileByCharArray(ENCRYPTED_FILE_PATH, DATABASE_PASSWORD_FILENAME, CryptoWrapper.getCipherText(ciphers[0],
                 databasePassword));
-        return tryDatabaseConnection();
+        if(!tryDatabaseConnection()) {
+            FileTools.setFileByCharArray(ENCRYPTED_FILE_PATH, DATABASE_URL_FILENAME, cipherText);
+            FileTools.setFileByCharArray(ENCRYPTED_FILE_PATH, DATABASE_USERNAME_FILENAME, CryptoWrapper.getCipherText(ciphers[0],
+                    databaseUsername));
+            FileTools.setFileByCharArray(ENCRYPTED_FILE_PATH, DATABASE_PASSWORD_FILENAME, CryptoWrapper.getCipherText(ciphers[0],
+                    databasePassword));
+            return tryDatabaseConnection();
+        } else {
+            return true;
+        }
     }
 
     public boolean createDatabaseConnection() {
@@ -294,10 +313,6 @@ public class MainModel {
 
     protected void exitProgram() {
         exit();
-    }
-
-    private void showErrorMessage(String message) {
-        System.out.println("Error Message: " + message);
     }
 
     private Scene openPopup(String title, String fxml) {
