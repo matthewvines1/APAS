@@ -1,9 +1,11 @@
 package com.example.socialmediaproject;
 
+import com.example.socialmediaproject.databaseentities.Contact;
 import com.example.socialmediaproject.databaseentities.User;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class DatabaseConnector {
@@ -13,6 +15,8 @@ public class DatabaseConnector {
     private final String SQL_SET_USER = "INSERT INTO "+DB_NAME+".users (username, password_hash, has_view_role, " +
             "has_edit_role, has_delete_role, is_active, creation_date_time, last_login_date_time) VALUES (" +
             "?, ?, ?, ?, ?, ?, ?, ?)";
+    private final String SQL_SET_CONTACT = "INSERT INTO "+DB_NAME+".contacts (first_name, is_active, last_name, " +
+            "middle_name) VALUES (?, ?, ?, ?)";
     private char[] jdbcUrl;
     private char[] sqlUsername;
     private char[] sqlPassword;
@@ -47,7 +51,7 @@ public class DatabaseConnector {
             try {
                 resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    currentUser = new User(resultSet.getInt("id"), username, passwordHash,
+                    currentUser = new User(resultSet.getInt("user_id"), username, passwordHash,
                             resultSet.getBoolean("has_view_role"),
                             resultSet.getBoolean("has_edit_role"),
                             resultSet.getBoolean("has_delete_role"),
@@ -64,12 +68,9 @@ public class DatabaseConnector {
             log("getUser", e.toString());
         } finally {
             closeDatabase(resultSet, statement, connection);
+            Global.clearStringBuilders(new StringBuilder[]{stringBuilderUrl, stringBuilderUsername, stringBuilderPassword,
+                    stringBuilderUserUsername, stringBuilderUserPasswordHash});
         }
-        stringBuilderUrl.setLength(0);
-        stringBuilderUsername.setLength(0);
-        stringBuilderPassword.setLength(0);
-        stringBuilderUserUsername.setLength(0);
-        stringBuilderUserPasswordHash.setLength(0);
         return currentUser;
     }
 
@@ -84,6 +85,10 @@ public class DatabaseConnector {
             stringBuilderUsername.append(sqlUsername);
             StringBuilder stringBuilderPassword = new StringBuilder();
             stringBuilderPassword.append(sqlPassword);
+            StringBuilder stringBuilderUserUsername = new StringBuilder();
+            stringBuilderUserUsername.append(user.getUsername());
+            StringBuilder stringBuilderUserPasswordHash = new StringBuilder();
+            stringBuilderUserPasswordHash.append(user.getPasswordHash());
             try {
                 connection = DriverManager.getConnection(stringBuilderUrl.toString(), stringBuilderUsername.toString(), stringBuilderPassword.toString());
                 statement = connection.prepareStatement(SQL_SET_USER);
@@ -91,10 +96,6 @@ public class DatabaseConnector {
                         " " + (new SimpleDateFormat("HH:mm:ss")).format(user.getCreationTime());
                 String lastLoginDateTime = (new SimpleDateFormat("yyyy-MM-dd")).format(user.getLastLoginDate()) +
                         " " + (new SimpleDateFormat("HH:mm:ss")).format(user.getLastLoginTime());
-                StringBuilder stringBuilderUserUsername = new StringBuilder();
-                stringBuilderUserUsername.append(user.getUsername());
-                StringBuilder stringBuilderUserPasswordHash = new StringBuilder();
-                stringBuilderUserPasswordHash.append(user.getPasswordHash());
                 statement.setString(1, stringBuilderUserUsername.toString());
                 statement.setString(2, stringBuilderUserPasswordHash.toString());
                 statement.setBoolean(3, user.getViewRole() && currentUser.getViewRole());
@@ -104,17 +105,16 @@ public class DatabaseConnector {
                 statement.setString(7, creationDateTime);
                 statement.setString(8, lastLoginDateTime);
                 statement.executeUpdate();
-                stringBuilderUserUsername.setLength(0);
-                stringBuilderUserPasswordHash.setLength(0);
+                Global.clearStringBuilders(new StringBuilder[]{stringBuilderUserUsername,
+                        stringBuilderUserPasswordHash});
                 isSuccess = true;
             } catch (SQLException e) {
                 log("newUser", e.toString());
             } finally {
                 closeDatabase(null, statement, connection);
+                Global.clearStringBuilders(new StringBuilder[]{stringBuilderUrl, stringBuilderUsername,
+                        stringBuilderPassword, stringBuilderUserUsername, stringBuilderUserPasswordHash});
             }
-            stringBuilderUrl.setLength(0);
-            stringBuilderUsername.setLength(0);
-            stringBuilderPassword.setLength(0);
         }
         return isSuccess;
     }
@@ -152,14 +152,45 @@ public class DatabaseConnector {
             log("newUser", e.toString());
         } finally {
             closeDatabase(null, statement, connection);
+            Global.clearStringBuilders(new StringBuilder[]{stringBuilderUrl, stringBuilderUsername, stringBuilderPassword,
+                    stringBuilderUserUsername, stringBuilderUserPasswordHash});
         }
-        stringBuilderUrl.setLength(0);
-        stringBuilderUsername.setLength(0);
-        stringBuilderPassword.setLength(0);
-        stringBuilderUserUsername.setLength(0);
-        stringBuilderUserPasswordHash.setLength(0);
         return isSuccess;
     }
+
+    public boolean createContact(Contact contact) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        boolean isSuccess = false;
+        if(currentUser.getIsActive() && currentUser.getEditRole()) {
+            StringBuilder stringBuilderUrl = new StringBuilder();
+            stringBuilderUrl.append(jdbcUrl);
+            StringBuilder stringBuilderUsername = new StringBuilder();
+            stringBuilderUsername.append(sqlUsername);
+            StringBuilder stringBuilderPassword = new StringBuilder();
+            stringBuilderPassword.append(sqlPassword);
+            try {
+                connection = DriverManager.getConnection(stringBuilderUrl.toString(), stringBuilderUsername.toString(),
+                        stringBuilderPassword.toString());
+                statement = connection.prepareStatement(SQL_SET_CONTACT);
+                statement.setString(1, contact.getFirstName());
+                statement.setBoolean(2, contact.isActive());
+                statement.setString(3, contact.getLastName());
+                statement.setString(4, contact.getMiddleName());
+                statement.executeUpdate();
+                isSuccess = true;
+            } catch (Exception e) {
+                log("createContact", e.toString());
+            } finally {
+                closeDatabase(null, statement, connection);
+                Global.clearStringBuilders(new StringBuilder[]{stringBuilderUrl, stringBuilderUsername,
+                        stringBuilderPassword});
+            }
+        }
+
+        return isSuccess;
+    }
+
     private void closeDatabase(ResultSet resultSet, PreparedStatement preparedStatement, Connection connection) {
         if(resultSet != null) {
             try {

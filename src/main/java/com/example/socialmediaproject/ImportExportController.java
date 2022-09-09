@@ -30,6 +30,7 @@ public class ImportExportController {
     private final String TITLE_EXPORT_EXTERNAL_ALL = "Export All";
     private ImportExportModel importExportModel;
     private Parent importExportContentRoot;
+    private DatabaseConnector databaseConnector;
 
     @FXML
     TabPane mainTabPane;
@@ -51,6 +52,10 @@ public class ImportExportController {
     private int paneSelection3;
     public ImportExportController() {
         importExportModel = new ImportExportModel();
+    }
+
+    public void setDatabaseConnector(DatabaseConnector databaseConnector) {
+        this.databaseConnector = databaseConnector;
     }
 
     public void menuChange() {

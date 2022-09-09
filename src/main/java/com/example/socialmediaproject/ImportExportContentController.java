@@ -122,7 +122,8 @@ public class ImportExportContentController {
                 }
                 break;
         }
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(fileExtensionFilterDescription, fileExtensionFilter));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(fileExtensionFilterDescription,
+                fileExtensionFilter));
         fileChooser.setTitle(title);
         file = fileChooser.showOpenDialog(stage);
         if(file != null) {

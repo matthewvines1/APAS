@@ -22,6 +22,12 @@ public class Global {
         Arrays.fill(chars, (char)0);
     }
 
+    public static final void clearStringBuilders(StringBuilder[] stringBuilders) {
+        for(int i = 0; i < stringBuilders.length; i++) {
+            stringBuilders[i].setLength(0);
+        }
+    }
+
     public static final void log(String className, String functionName, String message) {
         System.out.println(className + " - " + functionName + " : " + message + "\n");
     }
