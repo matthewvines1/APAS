@@ -54,6 +54,10 @@ public class MainModel {
         openPopupLogin();
     }
 
+    public DatabaseConnector getDatabaseConnector() {
+        return databaseConnector;
+    }
+
     private void openPopupLogin() {
         final boolean[] isLoggingIn = {true};
         Scene loginScene = openPopup(LOGIN_TITLE, "login.fxml");

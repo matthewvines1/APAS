@@ -52,6 +52,7 @@ public class MenuController {
         }
         importExportController = loader.getController();
         //Init Edit Contacts
+        importExportController.setDatabaseConnector(mainModel.getDatabaseConnector());
     }
 
     @FXML
