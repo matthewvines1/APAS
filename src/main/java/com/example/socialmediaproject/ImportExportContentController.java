@@ -134,6 +134,15 @@ public class ImportExportContentController {
     }
     @FXML
     protected void upload() {
-        importExportModel.upload();
+        boolean isSuccess = false;
+        isSuccess = importExportModel.upload();
+        if(isSuccess) {
+            log("upload", "Uploaded contact");
+        } else {
+            log("upload", "Could not upload contact");
+        }
+    }
+    private void log(String functionName, String message) {
+        Global.log("ImportExportContentController", functionName, message);
     }
 }

@@ -55,7 +55,7 @@ public class ImportExportController {
     }
 
     public void setDatabaseConnector(DatabaseConnector databaseConnector) {
-        this.databaseConnector = databaseConnector;
+        importExportModel.setDatabaseConnector(databaseConnector);
     }
 
     public void menuChange() {

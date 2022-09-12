@@ -1,5 +1,7 @@
 package com.example.socialmediaproject;
 
+import com.example.socialmediaproject.databaseentities.Contact;
+
 import java.io.File;
 
 public class ImportExportModel {
@@ -8,6 +10,7 @@ public class ImportExportModel {
     private int selection2;
     private int selection3;
     private File file;
+    private DatabaseConnector databaseConnector;
 
     protected void setSelection(int selection1, int selection2, int selection3) {
         this.selection1 = selection1;
@@ -19,22 +22,51 @@ public class ImportExportModel {
     }
 
     protected boolean upload() {
-        return true;
+        switch(selection1) {
+            case 0:
+                switch(selection2) {
+                    case 0:
+                        switch(selection3) {
+                            case 0:
+                                return importContactsCSV();
+                            case 1:
+                                return importInvoicesCSV();
+                            case 2:
+                                return importAllFilesZIP();
+                            case 3:
+                                return importContactsVCard();
+                        }
+                        break;
+                }
+                break;
+        }
+        return false;
+    }
+
+    public void setDatabaseConnector(DatabaseConnector databaseConnector) {
+        log("setDatabaseConnector", "Database Connector Set - Is Null: " + (databaseConnector == null));
+        this.databaseConnector = databaseConnector;
+    }
+
+    protected boolean importContactsVCard() {
+        return false;
     }
 
     protected boolean importContactsCSV() {
+        //Parse csv and upload
         return false;
     }
 
     protected boolean importInvoicesCSV() {
+        //Parse csv and upload
         return false;
     }
 
-    protected boolean importAllFilesZIP () {
+    protected boolean importAllFilesZIP() {
         return false;
     }
 
-    protected boolean importContactsCloud () {
+    protected boolean importContactsCloud() {
         return false;
     }
 
@@ -72,5 +104,9 @@ public class ImportExportModel {
 
     protected boolean exportAllFilesCloud () {
         return false;
+    }
+
+    private void log(String functionName, String message) {
+        Global.log("ImportExportModel", functionName, message);
     }
 }
