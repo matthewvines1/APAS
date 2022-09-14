@@ -44,7 +44,6 @@ public class ImportExportModel {
     }
 
     public void setDatabaseConnector(DatabaseConnector databaseConnector) {
-        log("setDatabaseConnector", "Database Connector Set - Is Null: " + (databaseConnector == null));
         this.databaseConnector = databaseConnector;
     }
 

@@ -83,6 +83,11 @@ public class FileTools {
         }
     }
 
+    public static String[][] getCsvByFile(File file) {
+        //CSVReader reader = new CSVReader();
+        return null;
+    }
+
     private static void log(String functionName, String message) {
         Global.log("FileTools", functionName, message);
     }
