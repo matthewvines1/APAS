@@ -2,7 +2,9 @@ package com.example.socialmediaproject;
 
 import javafx.scene.image.Image;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Global {
 
@@ -30,5 +32,17 @@ public class Global {
 
     public static final void log(String className, String functionName, String message) {
         System.out.println(className + " - " + functionName + " : " + message + "\n");
+    }
+
+    public static final void show2dArray(ArrayList<List<String>> arrayList) {
+        for (int i = 0; i < arrayList.size(); i++) {
+            for (int j = 0; j < arrayList.get(i).size(); j++) {
+                System.out.print(arrayList.get(i).get(j));
+                if (j != arrayList.get(i).size() - 1) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.println();
+        }
     }
 }

@@ -1,9 +1,15 @@
 package com.example.socialmediaproject;
 
+import com.opencsv.CSVReader;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class FileTools {
 
     private static final int MAX_CHARACTER_COUNT = 128;
@@ -83,9 +89,23 @@ public class FileTools {
         }
     }
 
-    public static String[][] getCsvByFile(File file) {
-        //CSVReader reader = new CSVReader();
-        return null;
+    public static ArrayList<List<String>> getCsvDataByFile(String filePath, String fileName) {
+        ArrayList<List<String>> finalArrayList = new ArrayList<>();
+        try {
+            try {
+                File file = new File(filePath + "\\" + fileName);
+                CSVReader reader = new CSVReader(new FileReader(file));
+                String nextRecord[];
+                while((nextRecord = reader.readNext()) != null) {
+                    finalArrayList.add(Arrays.asList(nextRecord));
+                }
+            } catch (FileNotFoundException e) {
+                log("getCsvByFile", e.toString());
+            }
+        } catch (Exception e) {
+            log("getCsvByFile", e.toString());
+        }
+        return finalArrayList;
     }
 
     private static void log(String functionName, String message) {

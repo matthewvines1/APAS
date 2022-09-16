@@ -51,6 +51,7 @@ public class MainModel {
         databaseConnector =  new DatabaseConnector();
         //get buffered writers for each database parameter files, then read and decrypt and set in database connector
         //if they do not exist prompt the user to enter them, then encrypt and store in file paths
+        Global.show2dArray(FileTools.getCsvDataByFile("C:\\Users\\matth\\OneDrive\\Documents", "Test.csv.xlsx"));
         openPopupLogin();
     }
 
