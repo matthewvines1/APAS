@@ -108,6 +108,24 @@ public class FileTools {
         return finalArrayList;
     }
 
+    public static ArrayList<List<String>> getCsvDataByFile(File file) {
+        ArrayList<List<String>> finalArrayList = new ArrayList<>();
+        try {
+            try {
+                CSVReader reader = new CSVReader(new FileReader(file));
+                String nextRecord[];
+                while((nextRecord = reader.readNext()) != null) {
+                    finalArrayList.add(Arrays.asList(nextRecord));
+                }
+            } catch (FileNotFoundException e) {
+                log("getCsvByFile", e.toString());
+            }
+        } catch (Exception e) {
+            log("getCsvByFile", e.toString());
+        }
+        return finalArrayList;
+    }
+
     private static void log(String functionName, String message) {
         Global.log("FileTools", functionName, message);
     }

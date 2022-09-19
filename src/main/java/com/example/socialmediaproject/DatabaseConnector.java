@@ -187,7 +187,41 @@ public class DatabaseConnector {
                         stringBuilderPassword});
             }
         }
+        return isSuccess;
+    }
 
+    public boolean createContactBulk(Contact[] contacts) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        boolean isSuccess = false;
+        if(currentUser.getIsActive() && currentUser.getEditRole()) {
+            StringBuilder stringBuilderUrl = new StringBuilder();
+            stringBuilderUrl.append(jdbcUrl);
+            StringBuilder stringBuilderUsername = new StringBuilder();
+            stringBuilderUsername.append(sqlUsername);
+            StringBuilder stringBuilderPassword = new StringBuilder();
+            stringBuilderPassword.append(sqlPassword);
+            try {
+                connection = DriverManager.getConnection(stringBuilderUrl.toString(), stringBuilderUsername.toString(),
+                        stringBuilderPassword.toString());
+                statement = connection.prepareStatement(SQL_SET_CONTACT);
+                for(int i = 0; i < contacts.length; i++) {
+                    isSuccess = false;
+                    statement.setString(1, contacts[i].getFirstName());
+                    statement.setBoolean(2, contacts[i].isActive());
+                    statement.setString(3, contacts[i].getLastName());
+                    statement.setString(4, contacts[i].getMiddleName());
+                    statement.executeUpdate();
+                    isSuccess = true;
+                }
+            } catch (Exception e) {
+                log("createContactBulk", e.toString());
+            } finally {
+                closeDatabase(null, statement, connection);
+                Global.clearStringBuilders(new StringBuilder[]{stringBuilderUrl, stringBuilderUsername,
+                        stringBuilderPassword});
+            }
+        }
         return isSuccess;
     }
 

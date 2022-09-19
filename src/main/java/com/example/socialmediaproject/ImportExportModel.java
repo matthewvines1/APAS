@@ -1,8 +1,10 @@
 package com.example.socialmediaproject;
 
-import com.example.socialmediaproject.databaseentities.Contact;
+import com.example.socialmediaproject.databaseentities.*;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImportExportModel {
 
@@ -52,12 +54,17 @@ public class ImportExportModel {
     }
 
     protected boolean importContactsCSV() {
-        //Parse csv and upload
+        ArrayList<List<String>> parsedFile = FileTools.getCsvDataByFile(file);
+        ArrayList<Contact> tempContacts;
+        ArrayList<Address> tempAddresses;
+        ArrayList<ContactAddressLink> contactAddressLinks;
         return false;
     }
 
     protected boolean importInvoicesCSV() {
-        //Parse csv and upload
+        ArrayList<List<String>> parsedFile = FileTools.getCsvDataByFile(file);
+        ArrayList<Invoice> invoices;
+        ArrayList<InvoiceAddressLink> invoiceAddressLinks;
         return false;
     }
 
